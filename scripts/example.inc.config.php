@@ -8,14 +8,14 @@
  */
 
 // database configuration
-$defined['hostname']    = "192.168.193.128";
+$defined['hostname']    = "";
 $defined['dbhost']      = "localhost";
-$defined['username']    = "phpDHCPAdmin";
-$defined['password']    = "password";
+$defined['username']    = "";
+$defined['password']    = "";
 $defined['dbname']      = "phpDHCPAdmin";
 
 // support & log notification email addresses
-$defined['mail']        = "/var/www/html/phpDHCPAdmin-0.9.5-beta/";
+$defined['mail']        = "";
 
 // application path information
 $defined['virpath']     = "";
