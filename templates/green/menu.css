@@ -1,0 +1,39 @@
+dl, dt, dd, ul, li {
+ margin: 0;
+ padding: 0;
+ list-style-type: none;
+}
+#menu {
+ position: relative;
+ top: 0;
+ left: 0;
+}
+dl#menu {
+ width: 10em;
+}
+dl#menu dt {
+ cursor: pointer;
+ margin: 2px 0;;
+ height: 20px;
+ line-height: 20px;
+ text-align: center;
+ font-weight: bold;
+ border: 1px solid #000;
+}
+dl#menu dd {
+ border: 1px solid #000;
+}
+dl#menu li {
+ text-align: center;
+}
+dl#menu li a, dl#menu dt a {
+ color: #000;
+ text-decoration: none;
+ display: block;
+ border: 0 none;
+ height: 100%;
+}
+
+dl#menu li a:hover, dl#menu dt a:hover {
+ background: #eee;
+}

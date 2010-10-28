@@ -1,0 +1,3 @@
+<!-- menu message -->
+&nbsp;&nbsp;Designed to provide<br>easy administrative<br>access to the DHCP<br>services developed by the <a href="http://isc.org" target="_blank"><b>ISC</b></a> organization.<br><br>Please log in to continue...
+<!-- end menu message -->

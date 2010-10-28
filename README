@@ -1,0 +1,122 @@
+phpDHCPAdmin-0.9.5-beta
+All rights reserved 2004-2010 Jason L. Gerfen
+
+DESCRIPTION
+  This application was designed as a web
+based interface to assist in management of
+the ISC DHCPD Service. It was designed
+with security, ease of use, RFC conformity
+and scalability in mind.
+
+FEATURES
+  + Commonly used global options (RFC-2131,
+    RFC-2132)
+  + Dynamic DNS zone transfers (RFC-2136)
+  + Multiple DNSSEC key support for use
+    with DNS zone transfers (RFC-1034,
+    RFC-1035)
+  + Failover (peer/master) per (RFC-2131)
+  + Multiple DNSSEC key definition support
+  + Multiple DNS zone configuration support
+  + Multiple Subnet w/ or w/o dynamic scope
+    support
+  + Multiple PXE groups w/ or w/o static host
+    support
+  + Dynamic Classes configuration support
+  + Multiple Pool configuration support
+  + Shared-network configuration support
+  + Static host support (assign to subnet
+    and/or pxe group) support
+  + Search option for large scale static host
+    configurations
+  + Group support (for large scale
+    environments where access to department
+    configurations should be limited)
+  + Access level support (also for tiered
+    access to global configuration options
+    vs. the need to edit and restart the
+    dhcpd service)
+  + Dynamic processing of currently configured
+    network interfaces
+  + Dynamic graphing support for traffic,
+    subnet to host assignments etc.
+   
+DOWNLOAD
+  You can download the latest version of
+the phpDHCPAdmin application at the following
+URL: http://phpdhcpadmin.sourceforge.net
+
+INSTALLATION
+  To install the application you will need
+to extract the .tgz archive into your
+webservers root folder:
+%> tar zxvf phpDHCPAdmin-0.9.5-beta.tgz
+
+CONFIGURATION
+  In order to begin using the application
+you will need to configure it specifically
+for your web server environment, create the
+necessary database tables and setup a simple
+crontab entry as a root user. The three
+steps are outlined below:
+
+1. Edit the configuration file 'inc.config.php'
+located in the 'scripts/' directory.
+
+The necessary configuration directives specific
+for your operating environment are:
+
+$defined['hostname'] <-- This is the domain or web
+server name (ex. http://phpdhcpadmin.com or 192.168.0.1)
+
+$defined['username'] <-- This is the username that
+needs to be created on your MySQL database.
+
+$defined['password'] <-- This is the password
+associated with the user you are accessing the
+database with
+
+$defined['virpath'] <-- This is the path to the
+installation folder (ex. /webroot/htdocs/phpDHCPAmin)
+
+2. Accompanying this distibution is a .sql file
+you can utilize to create the necessary tables.
+
+An example of importing this file is as follows;
+%> mysql -u root -p < /path/setup/phpDHCPAdmin-0.9.5-beta.sql
+
+Or you can utilize the installation script located
+in the 'setup' folder to help you setup the
+database schema as well as the configuration
+directives.
+
+3. Point any web browser to the newly installed
+application and login with the user 'admin' and no
+password.
+
+** You should setup an administrative user
+password but there should always be only 1 user
+associated with the admin group as this user is
+similar to a root user on common linux OS's.
+
+4. Create a crontab entry which will attempt to
+detect if the dhcpd.conf file has changed and
+restart the service.
+
+*/1 * * * * php /path/cron.restart.dhcpd.php 2&>1 /dev/null
+
+5. You will also need to set write permissions on the
+'conf' folder.
+%> chmod -R 0755 conf
+
+SUPPORT & BUG REPORTS
+  For support options you can join the mailing
+list located at http://phpdhcpadmin.sourceforge.net
+
+  If you run into errors when 'restarting' the
+dhcpd service you may need to 1. set write permissions
+on the 'conf' directory and create a crontab entry to
+run as the root user which would execute the file
+'/path/to/phpDHCPAdmin/bin/cron.restart.dhcpd.php'. An
+example follows:
+*/1 * * * * php /path/cron.restart.dhcpd.php 2&>1 /dev/null

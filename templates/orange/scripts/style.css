@@ -1,0 +1,153 @@
+hr {
+ color: #FFA000;
+ background-color: #FFA000;
+}
+      body {
+           margin : 0;
+           font-size : 10px;
+           background : #ffffff;
+      }
+     a {
+           color : #FFA000;
+           font : 11px Arial, Helvetica, sans-serif;
+											font-weight: bold;
+      }
+     a:hover {
+           color : #ffffff;
+           font : 11px Arial, Helvetica, sans-serif;
+											font-weight: bold;
+      }
+						body {
+           color : #000000;
+           font : 12px Arial, Helvetica, sans-serif;
+      }
+     div {
+           color : #000000;
+           font : 12px Arial, Helvetica, sans-serif;
+      }
+     font {
+           color : #000000;
+           font : 12px Arial, Helvetica, sans-serif;
+      }
+     form {
+           border : thin;
+           color : #000000;
+           font-family : Arial, Helvetica, sans-serif;
+           font-size : 10px;
+      }
+     input {
+           color : #000000;
+           font : 10px Arial, Helvetica, sans-serif;
+           margin : 0;
+           padding : 0;
+           border : 1px outset #FFA000;
+           background-color : #dcdcde;
+      }
+     select {
+           color : #000000;
+           font : 10px Arial, Helvetica, sans-serif;
+           margin : 0;
+           padding : 0;
+           border : 1px outset #FFA000;
+           background-color : #dcdcde;
+      }
+     p {
+           color : #000000;
+           font : 11px Verdana, Helvetica, Arial, Helvetica, sans-serif;
+      }
+     td {
+           color : #000000;
+           font : 12px Arial, Helvetica, sans-serif;
+      }
+     textarea {
+           color : #000000;
+           font : 10px Arial, Helvetica, sans-serif;
+           margin : 0;
+           padding : 0;
+           border : 1px outset #FFA000;
+           background-color : #dcdcde;
+      }
+     .copyright {
+					      color : #FFA000;
+           font-family : Arial, Helvetica, sans-serif;
+           font-size : 9px;
+           font-style : normal;
+           font-weight : normal;
+           font-variant : normal;
+      }
+      .btmTableBdr_1 {
+                border: 1px outset;
+					 background: #FFA000;
+						background-color: #FFA000;
+						border-color: #FFA000;
+					}
+					.btmTableBdr_2 {
+					 background: #dcdcde;
+						background-color: #dcdcde;
+						border-color: #dcdcde;
+					}
+					.leftMenuBold {
+     color : #FFA000;
+     font : 12px Arial, Helvetica, sans-serif;
+					font-weight: bold;
+				}
+				.leftMenuNrml {
+     color : #FFA000;
+     font : 11px Arial, Helvetica, sans-serif;
+					font-weight: normal;
+				}
+				.horizontalBar {
+				 color: #FFA000;
+				}
+#layer1
+{
+ position: absolute;
+ left:200px;
+ top:375px;
+ width:250px;
+ background-color:#dcdcde;
+ border: 1px solid #000;
+ z-index: 50;
+}
+#layer1_handle
+{
+ background-color:#FFA000;
+ padding:2px;
+ text-align:center;
+ font-weight:bold;
+ color: #000000;
+ vertical-align:middle;
+}
+#layer1_content
+{
+ padding:5px;
+}
+#layer2
+{
+ position: absolute;
+ left:200px;
+ top:290px;
+ width:500px;
+ background-color:#dcdcde;
+ border: 1px solid #000;
+ z-index: 50;
+}
+#layer2_handle
+{
+ background-color:#C10202;
+ padding:2px;
+ text-align:center;
+ font-weight:bold;
+ color: #000000;
+ vertical-align:middle;
+}
+#layer2_content
+{
+ padding:5px;
+}
+#close
+{
+ float:right;
+ text-decoration:none;
+ color:#FFFFFF;
+}

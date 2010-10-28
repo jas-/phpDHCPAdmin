@@ -1,0 +1,52 @@
+body {margin:0; padding:0;} #overlayfrm { background-color:#333; -moz-opacity:0.8; opacity:.80; }
+
+.paginationstyle {
+ text-align: center;
+ padding: 2px 0;
+ margin: 10px 0;
+}
+
+.paginationstyle a {
+ padding: 0 5px;
+ text-decoration: none;
+ border: 1px solid black;
+ background-color: white;
+}
+
+.paginationstyle a.imglinks a:hover{
+ background: #00ffff;
+}
+
+.menu ul {
+	margin-left: 0;
+	padding-left: 0;
+	display: inline;
+} 
+
+.menu ul li {
+ background-color: #dcdcde;
+ color: #000;
+ margin-left: 2px;
+	padding: 5px 5px;
+	border-left: 1px double #000;
+ border-right: 1px double #000;
+ border-top: 1px double #000;
+ border-bottom: 1px double #000;
+	list-style: none;
+	display: inline;
+}
+
+.menu li:hover {
+ background-color: #000;
+ color: #fff;
+}
+
+.menu a:link {
+ color: #000;
+ text-decoration: none;
+}
+
+.menu a:hover {
+ color: #fff;
+ text-decoration: none;
+}

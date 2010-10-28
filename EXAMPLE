@@ -1,0 +1,4316 @@
+#### Global Configuration Options ####
+option domain-name "domain.com";
+default-lease-time 900;
+max-lease-time 1800;
+option domain-name-servers dc1.domain.com;
+ddns-update-style ad-hoc;
+authoritative;
+allow bootp;
+
+#### Global PXE Configuration Options ####
+option space PXE;
+option PXE.mtftp-ip code 1 = ip-address;
+option PXE.mtftp-cport code 2 = unsigned integer 16;
+option PXE.stftp-cport code 3 = unsigned integer 16;
+option PXE.mtftp-tmout code 4 = unsigned integer 8;
+option PXE.mtftp-delay code 5 = unsigned integer 8;
+option PXE.discovery-control code 6 = unsigned integer 8;
+option PXE.discovery-mcast-addr code 7 = ip-address;
+
+#### DNSSEC Key Definitions ####
+key primarykey {
+     algorithm HMAC-MD5;
+     secret pRP5FapFoJ95JEL06sv4PQ==;
+}
+
+#### DNS Zone Definitions ####
+zone domain.com {
+     primary primary;
+     key primarykey;
+}
+zone 2.15.168.192.in-addr.arpa {
+     primary primary;
+     key primarykey;
+}
+
+#### Failover configuration ####
+failover peer "dc1" {
+     primary;
+     address 192.168.15.2;
+     port 519;
+     peer address 192.168.15.1;
+     peer port 520;
+     max-response-delay 30;
+     max-unacked-updates 10;
+     mclt 5;
+     split 128;
+     load balance max seconds 30;
+}
+
+#### Class Definitions ####
+
+### 'match-intel' Class Definition ###
+class "match-intel" {
+     match if substring ( option dhcp-client-identifier, 1, 3 ) = "abc";
+     option domain-name scl;
+     option domain-name-servers 192.168.15.3;
+     option subnet-mask 255.255.255.128;
+}
+
+### 'match-rf' Class Definition ###
+class "match-rf" {
+     option time-servers time.domain.com;
+}
+
+### 'match-pc-groups' Class Definition ###
+class "match-pc-groups" {
+     option root-path "smb://server.domain.com/test-share";
+}
+
+### 'match-mac-group' Class Definition ###
+class "match-mac-group" {
+     option domain-name scl;
+     match if substring ( option dhcp-client-identifier, 1, 3 ) = "0e0";
+     option broadcast-address 255.255.255.128;
+}
+
+### 'match-intel-adapters' Class Definition ###
+class "match-intel-adapters" {
+     option domain-name-servers domain.com, domain1.com;
+     option domain-name sub;
+     match if substring ( option dhcp-client-identifier, 1, 3 ) = "0e0";
+}
+
+#### Shared Network Definitions ####
+
+### Shared Network 'MySharedNetwork' ###
+shared-network MySharedNetwork {
+
+     ## 'mac_lib_mmc' Subnet Definition ##
+     subnet 192.168.14.0 netmask 255.255.255.0 {
+          option domain-name-servers 192.168.115.10, 192.168.201.10;
+          option routers 192.168.14.1;
+          range 192.168.14.1 192.168.14.100;
+          option ip-forwarding off;
+     }
+
+     ## 'mac_mmc_staff' Subnet Definition ##
+     subnet 192.168.16.0 netmask 255.255.255.128 {
+          option domain-name-servers 192.168.115.10, 192.168.201.10;
+          option routers 192.168.16.1;
+          option ip-forwarding off;
+     }
+
+     ## 'mac_union_lvl_2' Subnet Definition ##
+     subnet 192.168.211.192 netmask 255.255.255.192 {
+          option domain-name-servers 192.168.115.10, 192.168.201.10;
+          option routers 192.168.211.193;
+          option ip-forwarding off;
+     }
+
+     ## 'mac_lib_staff' Subnet Definition ##
+     subnet 192.168.12.0 netmask 255.255.255.0 {
+          option domain-name-servers 192.168.115.10, 192.168.201.10;
+          option routers 192.168.12.1;
+     }
+
+     ## 'mac_mmc_servers' Subnet Definition ##
+     subnet 192.168.17.128 netmask 255.255.255.224 {
+          option domain-name-servers 192.168.115.10, 192.168.201.10;
+          option routers 192.168.17.129;
+          option ip-forwarding off;
+     }
+}
+
+#### Subnet Definitions ####
+
+### 'Vlan-022' Subnet Definition ###
+subnet 192.168.241.0 netmask 255.255.255.0 {
+     option domain-name-servers 192.168.15.2, 192.168.18.2;
+     option routers 192.168.241.1;
+     option ip-forwarding off;
+}
+
+### 'Vlan-029' Subnet Definition ###
+subnet 192.168.15.0 netmask 255.255.255.0 {
+     option domain-name-servers 192.168.15.2, 192.168.18.2;
+     option routers 192.168.15.1;
+     option ip-forwarding off;
+}
+
+### 'Vlan-151' Subnet Definition ###
+subnet 192.168.18.0 netmask 255.255.255.0 {
+     option domain-name-servers 192.168.18.2, 192.168.15.2;
+     option routers 192.168.18.1;
+}
+
+### 'Vlan-461' Subnet Definition ###
+subnet 192.168.16.128 netmask 255.255.255.128 {
+     option domain-name-servers 192.168.16.130, 192.168.15.2;
+     option routers 192.168.16.129;
+     option ip-forwarding off;
+     ## Pool 'staff' ##
+     pool {
+          option domain-name-servers 192.168.16.130, 192.168.16.2;
+          option routers 192.168.16.129;
+          range 192.168.15.110 192.168.16.255;
+          option ip-forwarding on;
+          option broadcast-address 192.168.16.255;
+          option ntp-servers time.domain.com;
+          default-lease-time 1800;
+          min-lease-time 700;
+          max-lease-time 3200;
+          allow members of "match-intel-adapters";
+     }
+}
+
+### 'Vlan-031' Subnet Definition ###
+subnet 192.168.8.0 netmask 255.255.255.0 {
+     option domain-name-servers 192.168.15.2, 192.168.18.2;
+     option routers 192.168.8.1;
+     option ip-forwarding off;
+}
+
+#### PXE Groups w/ Static Hosts ####
+
+### PXE Group 'MMC-PXE' ###
+group {
+          filename "/tftproot/pxelinux.0";
+          next-server 192.168.15.254;
+
+          ## Static Hosts Assigned to PXE Group ##
+          host mmpc-72 {
+               hardware ethernet 00:0e:0c:b6:10:c7;
+               fixed-address 192.168.15.172;
+          }
+          host MMPC-110 {
+               hardware ethernet 00:0e:0c:cf:84:ce;
+               fixed-address 192.168.15.210;
+          }
+          host MMPC-33 {
+               hardware ethernet 00:1b:21:1d:41:be;
+               fixed-address 192.168.15.133;
+          }
+          host MMPC-31 {
+               hardware ethernet 00:1b:21:1d:42:ac;
+               fixed-address 192.168.15.131;
+          }
+          host INPC-5B {
+               hardware ethernet 00:0e:0c:b3:03:bf;
+               fixed-address 192.168.15.91;
+          }
+          host INPC-5E {
+               hardware ethernet 00:02:B3:A2:9F:56;
+               fixed-address 192.168.15.92;
+          }
+          host INPC-5F {
+               hardware ethernet 00:0E:0C:B6:16:9E;
+               fixed-address 192.168.15.93;
+          }
+          host INPC-15 {
+               hardware ethernet 00:0E:0C:B7:3D:86;
+               fixed-address 192.168.15.94;
+          }
+          host INPC-25 {
+               hardware ethernet 00:0E:0C:B7:2B:89;
+               fixed-address 192.168.15.95;
+          }
+          host LIPC-01 {
+               hardware ethernet 00:02:B3:EB:05:c8;
+               fixed-address 192.168.15.51;
+          }
+          host LIPC-02 {
+               hardware ethernet 00:02:B3:EB:05:84;
+               fixed-address 192.168.15.52;
+          }
+          host LIPC-03 {
+               hardware ethernet 00:02:B3:eb:03:b7;
+               fixed-address 192.168.15.53;
+          }
+          host LIPC-04 {
+               hardware ethernet 00:02:B3:eb:07:80;
+               fixed-address 192.168.15.54;
+          }
+          host LIPC-05 {
+               hardware ethernet 00:02:B3:eb:07:57;
+               fixed-address 192.168.15.55;
+          }
+          host LIPC-06 {
+               hardware ethernet 00:02:B3:eb:09:48;
+               fixed-address 192.168.15.56;
+          }
+          host LIPC-07 {
+               hardware ethernet 00:02:B3:ea:fc:be;
+               fixed-address 192.168.15.57;
+          }
+          host LIPC-08 {
+               hardware ethernet 00:02:B3:eb:07:84;
+               fixed-address 192.168.15.58;
+          }
+          host LIPC-09 {
+               hardware ethernet 00:02:B3:eb:08:20;
+               fixed-address 192.168.15.59;
+          }
+          host LIPC-10 {
+               hardware ethernet 00:02:B3:eb:04:be;
+               fixed-address 192.168.15.60;
+          }
+          host LIPC-11 {
+               hardware ethernet 00:02:B3:eb:04:fb;
+               fixed-address 192.168.15.61;
+          }
+          host LIPC-12 {
+               hardware ethernet 00:02:B3:EB:08:BF;
+               fixed-address 192.168.15.62;
+          }
+          host LIPC-13 {
+               hardware ethernet 00:02:B3:ea:fa:9a;
+               fixed-address 192.168.15.63;
+          }
+          host LIPC-14 {
+               hardware ethernet 00:02:B3:eb:08:ad;
+               fixed-address 192.168.15.64;
+          }
+          host LIPC-15 {
+               hardware ethernet 00:02:B3:eb:06:79;
+               fixed-address 192.168.15.65;
+          }
+          host LIPC-16 {
+               hardware ethernet 00:02:B3:EB:07:BA;
+               fixed-address 192.168.15.66;
+          }
+          host LIPC-17 {
+               hardware ethernet 00:02:B3:eb:05:dc;
+               fixed-address 192.168.15.67;
+          }
+          host LIPC-18 {
+               hardware ethernet 00:02:B3:EB:07:FA;
+               fixed-address 192.168.15.68;
+          }
+          host LIPC-19 {
+               hardware ethernet 00:02:B3:eb:06:a5;
+               fixed-address 192.168.15.69;
+          }
+          host LIPC-20 {
+               hardware ethernet 00:02:B3:eb:05:e4;
+               fixed-address 192.168.15.70;
+          }
+          host LIPC-21 {
+               hardware ethernet 00:02:B3:EB:08:b7;
+               fixed-address 192.168.15.71;
+          }
+          host LIPC-22 {
+               hardware ethernet 00:02:B3:EB:06:D7;
+               fixed-address 192.168.15.72;
+          }
+          host LIPC-23 {
+               hardware ethernet 00:02:B3:EB:07:AD;
+               fixed-address 192.168.15.73;
+          }
+          host LIPC-24 {
+               hardware ethernet 00:02:B3:EB:02:CC;
+               fixed-address 192.168.15.74;
+          }
+          host LIPC-25 {
+               hardware ethernet 00:02:B3:EB:08:36;
+               fixed-address 192.168.15.75;
+          }
+          host LIPC-26 {
+               hardware ethernet 00:02:b3:eb:06:e9;
+               fixed-address 192.168.15.76;
+          }
+          host LIPC-27 {
+               hardware ethernet 00:02:b3:eb:06:97;
+               fixed-address 192.168.15.77;
+          }
+          host LIPC-28 {
+               hardware ethernet 00:02:B3:eb:05:e3;
+               fixed-address 192.168.15.78;
+          }
+          host LIPC-29 {
+               hardware ethernet 00:02:B3:eb:05:de;
+               fixed-address 192.168.15.79;
+          }
+          host LIPC-30 {
+               hardware ethernet 00:02:B3:eb:07:f8;
+               fixed-address 192.168.15.80;
+          }
+          host MMSC-01 {
+               hardware ethernet 00:1b:21:1d:54:2b;
+               fixed-address 192.168.15.86;
+          }
+          host MMSC-02 {
+               hardware ethernet 00:1b:21:16:85:ac;
+               fixed-address 192.168.15.87;
+          }
+          host MMSC-03 {
+               hardware ethernet 00:1b:21:1d:42:2b;
+               fixed-address 192.168.15.88;
+          }
+          host MMAD-01 {
+               hardware ethernet 00:0E:0C:B7:31:A4;
+               fixed-address 192.168.15.98;
+          }
+          host MMAD-02 {
+               hardware ethernet 00:0E:0c:b6:10:ad;
+               fixed-address 192.168.15.99;
+          }
+          host MMAD-03 {
+               hardware ethernet 00:0e:0c:b6:10:ec;
+               fixed-address 192.168.15.100;
+          }
+          host MMPC-01 {
+               hardware ethernet 00:0E:0C:CF:84:92;
+               fixed-address 192.168.15.101;
+          }
+          host MMPC-03 {
+               hardware ethernet 00:1b:21:01:68:b0;
+               fixed-address 192.168.15.103;
+          }
+          host MMPC-04 {
+               hardware ethernet 00:0E:0C:CF:86:1D;
+               fixed-address 192.168.15.104;
+          }
+          host MMPC-05 {
+               hardware ethernet 00:0E:0C:CF:86:1F;
+               fixed-address 192.168.15.105;
+          }
+          host MMPC-06 {
+               hardware ethernet 00:1b:21:01:67:DA;
+               fixed-address 192.168.15.106;
+          }
+          host MMPC-07 {
+               hardware ethernet 00:0E:0C:CF:7E:F7;
+               fixed-address 192.168.15.107;
+          }
+          host MMPC-08 {
+               hardware ethernet 00:0E:0C:CF:85:63;
+               fixed-address 192.168.15.108;
+          }
+          host MMPC-09 {
+               hardware ethernet 00:0E:0C:CF:84:A8;
+               fixed-address 192.168.15.109;
+          }
+          host MMPC-10 {
+               hardware ethernet 00:1B:21:02:5E:CE;
+               fixed-address 192.168.15.110;
+          }
+          host MMPC-11 {
+               hardware ethernet 00:0E:0C:CF:86:8C;
+               fixed-address 192.168.15.111;
+          }
+          host MMPC-12 {
+               hardware ethernet 00:0E:0C:CF:84:C5;
+               fixed-address 192.168.15.112;
+          }
+          host MMPC-13 {
+               hardware ethernet 00:0E:0C:CF:86:C7;
+               fixed-address 192.168.15.113;
+          }
+          host MMPC-14 {
+               hardware ethernet 00:1B:21:01:6B:28;
+               fixed-address 192.168.15.114;
+          }
+          host MMPC-15 {
+               hardware ethernet 00:0E:0C:CF:86:A6;
+               fixed-address 192.168.15.115;
+          }
+          host MMPC-16 {
+               hardware ethernet 00:0E:0C:CF:86:7B;
+               fixed-address 192.168.15.116;
+          }
+          host MMPC-17 {
+               hardware ethernet 00:0E:0C:CF:86:85;
+               fixed-address 192.168.15.117;
+          }
+          host MMPC-18 {
+               hardware ethernet 00:1b:21:1d:43:42;
+               fixed-address 192.168.15.118;
+          }
+          host MMPC-19 {
+               hardware ethernet 00:1b:21:16:7b:d7;
+               fixed-address 192.168.15.119;
+          }
+          host MMPC-20 {
+               hardware ethernet 00:1b:21:1d:42:aa;
+               fixed-address 192.168.15.120;
+          }
+          host MMPC-21 {
+               hardware ethernet 00:1b:21:16:7b:c1;
+               fixed-address 192.168.15.121;
+          }
+          host MMPC-22 {
+               hardware ethernet 00:1b:21:1d:43:02;
+               fixed-address 192.168.15.122;
+          }
+          host MMPC-23 {
+               hardware ethernet 00:1b:21:1d:42:17;
+               fixed-address 192.168.15.123;
+          }
+          host MMPC-24 {
+               hardware ethernet 00:1b:21:1d:42:2c;
+               fixed-address 192.168.15.124;
+          }
+          host MMPC-26 {
+               hardware ethernet 00:1b:21:16:7b:d8;
+               fixed-address 192.168.15.126;
+          }
+          host MMPC-27 {
+               hardware ethernet 00:1b:21:1d:42:ab;
+               fixed-address 192.168.15.127;
+          }
+          host MMPC-28 {
+               hardware ethernet 00:1b:21:1d:4f:a4;
+               fixed-address 192.168.15.128;
+          }
+          host MMPC-29 {
+               hardware ethernet 00:1b:21:1d:43:05;
+               fixed-address 192.168.15.129;
+          }
+          host MMPC-30 {
+               hardware ethernet 00:1b:21:1d:4e:e1;
+               fixed-address 192.168.15.130;
+          }
+          host MMPC-36 {
+               hardware ethernet 00:1b:21:1d:42:fa;
+               fixed-address 192.168.15.136;
+          }
+          host MMPC-37 {
+               hardware ethernet 00:1b:21:1d:42:f5;
+               fixed-address 192.168.15.137;
+          }
+          host MMPC-38 {
+               hardware ethernet 00:1b:21:1d:42:f9;
+               fixed-address 192.168.15.138;
+          }
+          host MMPC-39 {
+               hardware ethernet 00:1b:21:1d:41:fd;
+               fixed-address 192.168.15.139;
+          }
+          host MMPC-40 {
+               hardware ethernet 00:1b:21:1d:42:ff;
+               fixed-address 192.168.15.140;
+          }
+          host MMPC-41 {
+               hardware ethernet 00:1b:21:1b:5b:22;
+               fixed-address 192.168.15.141;
+          }
+          host MMPC-42 {
+               hardware ethernet 00:1b:21:1b:57:19;
+               fixed-address 192.168.15.142;
+          }
+          host MMPC-43 {
+               hardware ethernet 00:1b:21:1b:4d:e0;
+               fixed-address 192.168.15.143;
+          }
+          host MMPC-44 {
+               hardware ethernet 00:1b:21:1d:4f:a1;
+               fixed-address 192.168.15.144;
+          }
+          host MMPC-45 {
+               hardware ethernet 00:1B:21:1D:41:CE;
+               fixed-address 192.168.15.145;
+          }
+          host MMPC-47 {
+               hardware ethernet 00:1b:21:1d:43:47;
+               fixed-address 192.168.15.147;
+          }
+          host MMPC-48 {
+               hardware ethernet 00:1b:21:1d:59:35;
+               fixed-address 192.168.15.148;
+          }
+          host MMPC-49 {
+               hardware ethernet 00:1b:21:16:7b:bf;
+               fixed-address 192.168.15.149;
+          }
+          host MMPC-50 {
+               hardware ethernet 00:1b:21:1d:4e:de;
+               fixed-address 192.168.15.150;
+          }
+          host MMPC-51 {
+               hardware ethernet 00:1B:21:1D:59:36;
+               fixed-address 192.168.15.151;
+          }
+          host MMPC-52 {
+               hardware ethernet 00:1b:21:1b:5b:20;
+               fixed-address 192.168.15.152;
+          }
+          host MMPC-53 {
+               hardware ethernet 00:1b:21:1d:42:19;
+               fixed-address 192.168.15.153;
+          }
+          host mmpc-74 {
+               hardware ethernet 00:0e:0c:b7:2b:b6;
+               fixed-address 192.168.15.174;
+          }
+          host mmpc-73 {
+               hardware ethernet 00:0e:0c:b7:2a:65;
+               fixed-address 192.168.15.173;
+          }
+          host MMPC-35 {
+               hardware ethernet 00:1b:21:16:7b:b5;
+               fixed-address 192.168.15.135;
+          }
+          host mmpc-71 {
+               hardware ethernet 00:0e:0c:b6:16:98;
+               fixed-address 192.168.15.171;
+          }
+          host mmpc-65 {
+               hardware ethernet 00:0e:0c:b7:3d:9c;
+               fixed-address 192.168.15.165;
+          }
+          host mmpc-66 {
+               hardware ethernet 00:0e:0c:b7:2f:13;
+               fixed-address 192.168.15.166;
+          }
+          host MMPC-82 {
+               hardware ethernet 00:0E:0C:B6:16:7B;
+               fixed-address 192.168.15.182;
+          }
+          host MMPC-81 {
+               hardware ethernet 00:0E:0C:B3:06:0A;
+               fixed-address 192.168.15.181;
+          }
+          host MMPC-80 {
+               hardware ethernet 00:0E:0C:B7:2E:7F;
+               fixed-address 192.168.15.180;
+          }
+          host MMPC-70 {
+               hardware ethernet 00:0E:0C:B3:03:B2;
+               fixed-address 192.168.15.170;
+          }
+          host MMPC-69 {
+               hardware ethernet 00:0E:0C:B7:2F:16;
+               fixed-address 192.168.15.169;
+          }
+          host MMPC-67 {
+               hardware ethernet 00:0E:0C:B7:2B:A7;
+               fixed-address 192.168.15.167;
+          }
+          host MMPC-91 {
+               hardware ethernet 00:0E:0C:B7:2F:28;
+               fixed-address 192.168.15.191;
+          }
+          host MMPC-90 {
+               hardware ethernet 00:0E:0C:B6:16:B9;
+               fixed-address 192.168.15.190;
+          }
+          host MMPC-89 {
+               hardware ethernet 00:0E:0C:B6:0F:19;
+               fixed-address 192.168.15.189;
+          }
+          host MMPC-88 {
+               hardware ethernet 00:0E:0C:B6:16:97;
+               fixed-address 192.168.15.188;
+          }
+          host MMPC-87 {
+               hardware ethernet 00:0E:0C:B6:16:E7;
+               fixed-address 192.168.15.187;
+          }
+          host mmpc-86 {
+               hardware ethernet 00:0E:0C:B7:2B:B5;
+               fixed-address 192.168.15.186;
+          }
+          host MMPC-85 {
+               hardware ethernet 00:0E:0C:B7:2E:AE;
+               fixed-address 192.168.15.185;
+          }
+          host MMPC-92 {
+               hardware ethernet 00:0e:0c:cf:84:c3;
+               fixed-address 192.168.15.192;
+          }
+          host MMPC-93 {
+               hardware ethernet 00:0e:0c:cf:84:c4;
+               fixed-address 192.168.15.193;
+          }
+          host MMPC-94 {
+               hardware ethernet 00:0e:0c:cf:86:83;
+               fixed-address 192.168.15.194;
+          }
+          host MMPC-95 {
+               hardware ethernet 00:0e:0c:cf:86:a7;
+               fixed-address 192.168.15.195;
+          }
+          host MMPC-96 {
+               hardware ethernet 00:0e:0c:cf:84:cd;
+               fixed-address 192.168.15.196;
+          }
+          host MMPC-97 {
+               hardware ethernet 00:0e:0c:cf:84:a1;
+               fixed-address 192.168.15.197;
+          }
+          host MMPC-99 {
+               hardware ethernet 00:0e:0c:cf:86:96;
+               fixed-address 192.168.15.199;
+          }
+          host MMPC-100 {
+               hardware ethernet 00:0e:0c:cf:86:41;
+               fixed-address 192.168.15.200;
+          }
+          host MMPC-101 {
+               hardware ethernet 00:0e:0c:cf:86:11;
+               fixed-address 192.168.15.201;
+          }
+          host MMPC-120 {
+               hardware ethernet 00:1b:21:01:6c:10;
+               fixed-address 192.168.15.220;
+          }
+          host MMPC-102 {
+               hardware ethernet 00:0e:0c:cf:81:22;
+               fixed-address 192.168.15.202;
+          }
+          host MMPC-118 {
+               hardware ethernet 00:0e:0c:cf:86:98;
+               fixed-address 192.168.15.218;
+          }
+          host MMPC-104 {
+               hardware ethernet 00:0e:0c:cf:86:37;
+               fixed-address 192.168.15.204;
+          }
+          host MMPC-105 {
+               hardware ethernet 00:1b:21:01:69:a5;
+               fixed-address 192.168.15.205;
+          }
+          host MMPC-107 {
+               hardware ethernet 00:1b:21:01:68:bb;
+               fixed-address 192.168.15.207;
+          }
+          host MMPC-125 {
+               hardware ethernet 00:0e:0c:cf:86:13;
+               fixed-address 192.168.15.225;
+          }
+          host MTPC-02 {
+               hardware ethernet 00:0e:0c:b7:2d:a9;
+               fixed-address 192.168.15.12;
+          }
+          host MTPC-01 {
+               hardware ethernet 00:0e:0c:b6:16:6e;
+               fixed-address 192.168.15.11;
+          }
+          host MTPC-03 {
+               hardware ethernet 00:0e:0c:b6:10:c4;
+               fixed-address 192.168.15.13;
+          }
+          host MTPC-04 {
+               hardware ethernet 00:0e:0c:b3:05:fd;
+               fixed-address 192.168.15.14;
+          }
+          host MTPC-05 {
+               hardware ethernet 00:0e:0c:b6:16:99;
+               fixed-address 192.168.15.15;
+          }
+          host MTPC-06 {
+               hardware ethernet 00:0e:0c:b7:2a:e8;
+               fixed-address 192.168.15.16;
+          }
+          host MTPC-07 {
+               hardware ethernet 00:0e:0c:b3:08:44;
+               fixed-address 192.168.15.17;
+          }
+          host MTPC-08 {
+               hardware ethernet 00:0e:0c:b3:06:01;
+               fixed-address 192.168.15.18;
+          }
+          host MTPC-09 {
+               hardware ethernet 00:0e:0c:b7:2e:e3;
+               fixed-address 192.168.15.19;
+          }
+          host MTPC-10 {
+               hardware ethernet 00:0e:0c:b7:30:79;
+               fixed-address 192.168.15.20;
+          }
+          host MTPC-11 {
+               hardware ethernet 00:0e:0c:b3:f1:f6;
+               fixed-address 192.168.15.21;
+          }
+          host MTPC-12 {
+               hardware ethernet 00:0e:0c:b5:5a:ef;
+               fixed-address 192.168.15.22;
+          }
+          host MTPC-13 {
+               hardware ethernet 00:0e:0c:b6:16:96;
+               fixed-address 192.168.15.23;
+          }
+          host MTPC-14 {
+               hardware ethernet 00:0e:0c:b6:16:12;
+               fixed-address 192.168.15.24;
+          }
+          host MTPC-15 {
+               hardware ethernet 00:0e:0c:b6:0e:44;
+               fixed-address 192.168.15.25;
+          }
+          host MTPC-16 {
+               hardware ethernet 00:0e:0c:b7:3d:9f;
+               fixed-address 192.168.15.26;
+          }
+          host MTPC-17 {
+               hardware ethernet 00:0e:0c:b6:16:6d;
+               fixed-address 192.168.15.27;
+          }
+          host MTPC-18 {
+               hardware ethernet 00:0e:0c:b7:28:b8;
+               fixed-address 192.168.15.28;
+          }
+          host MTPC-19 {
+               hardware ethernet 00:0e:0c:b7:3d:85;
+               fixed-address 192.168.15.29;
+          }
+          host MTPC-20 {
+               hardware ethernet 00:0e:0c:b7:2a:68;
+               fixed-address 192.168.15.30;
+          }
+          host MTPC-21 {
+               hardware ethernet 00:0e:0c:b7:33:c0;
+               fixed-address 192.168.15.31;
+          }
+          host MTPC-22 {
+               hardware ethernet 00:0e:0c:b7:28:cb;
+               fixed-address 192.168.15.32;
+          }
+          host MTPC-23 {
+               hardware ethernet 00:0e:0c:b6:0f:22;
+               fixed-address 192.168.15.33;
+          }
+          host MTPC-24 {
+               hardware ethernet 00:0e:0c:b6:16:b8;
+               fixed-address 192.168.15.34;
+          }
+          host MTPC-25 {
+               hardware ethernet 00:0e:0c:b6:0f:01;
+               fixed-address 192.168.15.35;
+          }
+          host MTPC-26 {
+               hardware ethernet 00:0e:0c:b3:06:0e;
+               fixed-address 192.168.15.36;
+          }
+          host MTPC-27 {
+               hardware ethernet 00:0e:0c:b6:0e:1a;
+               fixed-address 192.168.15.37;
+          }
+          host MTPC-28 {
+               hardware ethernet 00:0e:0c:b3:03:c3;
+               fixed-address 192.168.15.38;
+          }
+          host MTPC-29 {
+               hardware ethernet 00:0e:0c:b6:10:c9;
+               fixed-address 192.168.15.39;
+          }
+          host MTPC-30 {
+               hardware ethernet 00:0e:0c:b6:5d:5b;
+               fixed-address 192.168.15.40;
+          }
+          host MTPC-31 {
+               hardware ethernet 00:0e:0c:b6:5d:31;
+               fixed-address 192.168.15.41;
+          }
+          host MTPC-32 {
+               hardware ethernet 00:0e:0c:b7:35:d8;
+               fixed-address 192.168.15.42;
+          }
+          host MTPC-33 {
+               hardware ethernet 00:0e:0c:b7:29:3c;
+               fixed-address 192.168.15.43;
+          }
+          host MTPC-34 {
+               hardware ethernet 00:0e:0c:b3:02:8f;
+               fixed-address 192.168.15.44;
+          }
+          host MTPC-35 {
+               hardware ethernet 00:0e:0c:b7:2b:c2;
+               fixed-address 192.168.15.45;
+          }
+          host MTPC-36 {
+               hardware ethernet 00:0e:0c:b7:2c:22;
+               fixed-address 192.168.15.46;
+          }
+          host MMPC-106 {
+               hardware ethernet 00:0e:0c:cf:81:21;
+               fixed-address 192.168.15.206;
+          }
+          host mmac-1 {
+               hardware ethernet 00:16:cb:c0:dd:b7;
+               fixed-address 192.168.14.2;
+          }
+          host MMPC-113 {
+               hardware ethernet 00:0e:0c:cf:7f:00;
+               fixed-address 192.168.15.213;
+          }
+          host MMPC-02 {
+               hardware ethernet 00:0E:0C:CF:84:AA;
+               fixed-address 192.168.15.102;
+          }
+          host MMPC-108 {
+               hardware ethernet 00:0e:0c:cf:84:82;
+               fixed-address 192.168.15.208;
+          }
+          host MMPC-46 {
+               hardware ethernet 00:1b:21:1d:42:fe;
+               fixed-address 192.168.15.146;
+          }
+          host MMPC-117 {
+               hardware ethernet 00:0e:0c:cf:86:1a;
+               fixed-address 192.168.15.217;
+          }
+          host mmca-01 {
+               hardware ethernet 00:0E:0C:B7:34:F9;
+               fixed-address 192.168.15.89;
+          }
+          host mmpc-75 {
+               hardware ethernet 00:0e:0c:b5:5a:f4;
+               fixed-address 192.168.15.175;
+          }
+          host MMPC-32 {
+               hardware ethernet 00:1b:21:16:7b:c3;
+               fixed-address 192.168.15.132;
+          }
+          host MMPC-34 {
+               hardware ethernet 00:1b:21:1d:42:35;
+               fixed-address 192.168.15.134;
+          }
+          host MMPC-25 {
+               hardware ethernet 00:1b:21:16:7b:ba;
+               fixed-address 192.168.15.125;
+          }
+          host MMPC-111 {
+               hardware ethernet 00:0e:0c:cf:86:26;
+               fixed-address 192.168.15.211;
+          }
+          host MMPC-112 {
+               hardware ethernet 00:0e:0c:cf:84:94;
+               fixed-address 192.168.15.212;
+          }
+          host MMPC-116 {
+               hardware ethernet 00:0e:0c:cf:87:5c;
+               fixed-address 192.168.15.216;
+          }
+          host MMPC-119 {
+               hardware ethernet 00:0e:0c:cf:80:e8;
+               fixed-address 192.168.15.219;
+          }
+          host MMPC-121 {
+               hardware ethernet 00:0e:0c:cf:80:e7;
+               fixed-address 192.168.15.221;
+          }
+          host MMPC-122 {
+               hardware ethernet 00:1b:21:01:6c:0e;
+               fixed-address 192.168.15.222;
+          }
+          host MMPC-123 {
+               hardware ethernet 00:1b:21:01:6c:0d;
+               fixed-address 192.168.15.223;
+          }
+          host MMPC-126 {
+               hardware ethernet 00:0e:0c:cf:87:33;
+               fixed-address 192.168.15.226;
+          }
+          host MMPC-127 {
+               hardware ethernet 00:0e:0c:cf:84:d1;
+               fixed-address 192.168.15.227;
+          }
+          host MMPC-103 {
+               hardware ethernet 00:1b:21:01:69:c7;
+               fixed-address 192.168.15.203;
+          }
+          host MMPC-115 {
+               hardware ethernet 00:0e:0c:cf:86:93;
+               fixed-address 192.168.15.215;
+          }
+          host MMPC-114 {
+               hardware ethernet 00:0e:0c:cf:81:24;
+               fixed-address 192.168.15.214;
+          }
+          host mmpc-109 {
+               hardware ethernet 00:0e:0c:cf:84:95;
+               fixed-address 192.168.15.209;
+          }
+          host mmpc-98 {
+               hardware ethernet 00:0e:0c:cf:86:1e;
+               fixed-address 192.168.15.198;
+          }
+          host mmpc-60 {
+               hardware ethernet 00:0e:0c:b7:2b:a9;
+               fixed-address 192.168.15.160;
+          }
+          host MMPC-56 {
+               hardware ethernet 00:0E:0C:B3:03:CB;
+               fixed-address 192.168.15.156;
+          }
+          host MMPC-124 {
+               hardware ethernet 00:1B:21:01:66:B1;
+               fixed-address 192.168.15.224;
+          }
+          host MMPC-57 {
+               hardware ethernet 00:0E:0C:B7:32:D7;
+               fixed-address 192.168.15.157;
+          }
+          host MMPC-58 {
+               hardware ethernet 00:0e:0c:b7:32:92;
+               fixed-address 192.168.15.158;
+          }
+          host MMPC-61 {
+               hardware ethernet 00:0E:0C:B7:2F:98;
+               fixed-address 192.168.15.161;
+          }
+          host MMPC-62 {
+               hardware ethernet 00:0E:0C:CF:87:58;
+               fixed-address 192.168.15.162;
+          }
+          host MMPC-63 {
+               hardware ethernet 00:0E:0C:B7:2A:64;
+               fixed-address 192.168.15.163;
+          }
+          host MMPC-64 {
+               hardware ethernet 00:0E:0C:B7:2E:7E;
+               fixed-address 192.168.15.164;
+          }
+          host MMPC-68 {
+               hardware ethernet 00:0E:0C:B5:5C:7D;
+               fixed-address 192.168.15.168;
+          }
+          host MMPC-84 {
+               hardware ethernet 00:0E:0C:B6:10:E9;
+               fixed-address 192.168.15.184;
+          }
+          host mmpc-79 {
+               hardware ethernet 00:0e:0c:b3:08:43;
+               fixed-address 192.168.15.179;
+          }
+          host mmpc-78 {
+               hardware ethernet 00:0e:0c:b7:32:5e;
+               fixed-address 192.168.15.178;
+          }
+          host mmpc-77 {
+               hardware ethernet 00:0e:0c:b6:11:ec;
+               fixed-address 192.168.15.177;
+          }
+          host mmpc-76 {
+               hardware ethernet 00:0e:0c:b7:2a:67;
+               fixed-address 192.168.15.176;
+          }
+          host mmpc-83 {
+               hardware ethernet 00:0e:0c:b3:03:b1;
+               fixed-address 192.168.15.183;
+          }
+          host mmpc-54 {
+               hardware ethernet 00:1b:21:1d:43:2d;
+               fixed-address 192.168.15.154;
+          }
+          host mmpc-55 {
+               hardware ethernet 00:1b:21:1d:59:51;
+               fixed-address 192.168.15.155;
+          }
+          host MMPC-59 {
+               hardware ethernet 00:0e:0c:b7:34:f1;
+               fixed-address 192.168.15.159;
+          }
+          host ADAphone {
+               hardware ethernet 00:80:c8:10:4d:b8;
+               fixed-address 192.168.15.252;
+          }
+          host mmca-02 {
+               hardware ethernet 00:0E:0C:B6:10:BB;
+               fixed-address 192.168.15.90;
+          }
+          host MMCA-03 {
+               hardware ethernet 00:1B:21:04:C1:8A;
+               fixed-address 192.168.15.85;
+          }
+          host mmac-2 {
+               hardware ethernet 00:16:cb:c0:c9:7d;
+               fixed-address 192.168.14.3;
+          }
+          host mmac-3 {
+               hardware ethernet 00:16:cb:c0:a4:aa;
+               fixed-address 192.168.14.4;
+          }
+          host mmac-4 {
+               hardware ethernet 00:16:cb:90:ff:61;
+               fixed-address 192.168.14.5;
+          }
+          host mmac-5 {
+               hardware ethernet 00:16:cb:92:13:6f;
+               fixed-address 192.168.14.6;
+          }
+          host mmac-6 {
+               hardware ethernet 00:16:cb:95:e2:ca;
+               fixed-address 192.168.14.7;
+          }
+          host mmac-7 {
+               hardware ethernet 00:16:cb:92:12:72;
+               fixed-address 192.168.14.8;
+          }
+          host mmac-8 {
+               hardware ethernet 00:16:cb:95:e7:81;
+               fixed-address 192.168.14.9;
+          }
+          host mmac-9 {
+               hardware ethernet 00:16:cb:91:03:1f;
+               fixed-address 192.168.14.10;
+          }
+          host mmac-10 {
+               hardware ethernet 00:16:cb:8c:a8:ad;
+               fixed-address 192.168.14.11;
+          }
+          host mmac-11 {
+               hardware ethernet 00:0a:95:c9:27:c6;
+               fixed-address 192.168.14.12;
+          }
+          host mmac-12 {
+               hardware ethernet 00:0a:95:af:8a:ba;
+               fixed-address 192.168.14.13;
+          }
+          host mmac-13 {
+               hardware ethernet 00:0a:95:cb:21:b2;
+               fixed-address 192.168.14.14;
+          }
+          host mmac-14 {
+               hardware ethernet 00:0a:95:99:dc:e2;
+               fixed-address 192.168.14.15;
+          }
+          host mmac-15 {
+               hardware ethernet 00:0a:95:b9:bf:22;
+               fixed-address 192.168.14.16;
+          }
+          host mmac-16 {
+               hardware ethernet 00:0a:95:af:78:72;
+               fixed-address 192.168.14.17;
+          }
+          host mmac-17 {
+               hardware ethernet 00:0a:95:b4:7a:2a;
+               fixed-address 192.168.14.18;
+          }
+          host mmac-18 {
+               hardware ethernet 00:0a:95:d2:98:20;
+               fixed-address 192.168.14.19;
+          }
+          host mmac-19 {
+               hardware ethernet 00:0a:95:af:48:ae;
+               fixed-address 192.168.14.20;
+          }
+          host mmac-20 {
+               hardware ethernet 00:0a:95:98:1d:30;
+               fixed-address 192.168.14.21;
+          }
+          host mmac-21 {
+               hardware ethernet 00:0a:95:b5:1a:c6;
+               fixed-address 192.168.14.22;
+          }
+          host mmac-22 {
+               hardware ethernet 00:0a:95:d7:96:72;
+               fixed-address 192.168.14.23;
+          }
+          host mmac-23 {
+               hardware ethernet 00:0a:95:af:8a:be;
+               fixed-address 192.168.14.24;
+          }
+          host mmac-24 {
+               hardware ethernet 00:0a:95:d7:c2:fc;
+               fixed-address 192.168.14.25;
+          }
+          host mmac-25 {
+               hardware ethernet 00:0a:95:d7:b9:74;
+               fixed-address 192.168.14.26;
+          }
+          host mmac-26 {
+               hardware ethernet 00:11:24:e7:73:a2;
+               fixed-address 192.168.14.27;
+          }
+          host mmac-27 {
+               hardware ethernet 00:0a:95:a8:44:fa;
+               fixed-address 192.168.14.28;
+          }
+          host mmac-28 {
+               hardware ethernet 00:0a:95:d2:a1:94;
+               fixed-address 192.168.14.29;
+          }
+          host mmac-29 {
+               hardware ethernet 00:0a:95:b0:b2:66;
+               fixed-address 192.168.14.30;
+          }
+          host mmac-30 {
+               hardware ethernet 00:0a:95:d2:9d:32;
+               fixed-address 192.168.14.31;
+          }
+          host mmac-31 {
+               hardware ethernet 00:0a:95:96:9d:90;
+               fixed-address 192.168.14.32;
+          }
+          host mmac-32 {
+               hardware ethernet 00:0a:95:b9:9c:98;
+               fixed-address 192.168.14.33;
+          }
+          host mmac-33 {
+               hardware ethernet 00:0d:93:29:ba:1a;
+               fixed-address 192.168.14.34;
+          }
+          host mmac-34 {
+               hardware ethernet 00:0a:95:b2:6a:4e;
+               fixed-address 192.168.14.35;
+          }
+          host mmac-35 {
+               hardware ethernet 00:0a:95:af:7f:58;
+               fixed-address 192.168.14.36;
+          }
+          host mmac-36 {
+               hardware ethernet 00:0a:95:d8:94:3e;
+               fixed-address 192.168.14.37;
+          }
+          host mmac-37 {
+               hardware ethernet 00:0a:95:d2:a2:60;
+               fixed-address 192.168.14.38;
+          }
+          host mmac-38 {
+               hardware ethernet 00:0a:95:a8:99:14;
+               fixed-address 192.168.14.39;
+          }
+          host mmac-39 {
+               hardware ethernet 00:0d:93:c0:74:aa;
+               fixed-address 192.168.14.40;
+          }
+          host mmac-40 {
+               hardware ethernet 00:0a:95:b0:65:56;
+               fixed-address 192.168.14.41;
+          }
+          host mmac-41 {
+               hardware ethernet 00:0a:95:af:7a:fe;
+               fixed-address 192.168.14.42;
+          }
+          host mmac-42 {
+               hardware ethernet 00:0a:95:af:76:5a;
+               fixed-address 192.168.14.43;
+          }
+          host mmac-43 {
+               hardware ethernet 00:0a:95:af:8b:2c;
+               fixed-address 192.168.14.44;
+          }
+          host mmac-44 {
+               hardware ethernet 00:0a:95:b7:69:2a;
+               fixed-address 192.168.14.45;
+          }
+          host mmac-45 {
+               hardware ethernet 00:0a:95:b7:84:f0;
+               fixed-address 192.168.14.46;
+          }
+          host mmac-46 {
+               hardware ethernet 00:0a:95:af:80:de;
+               fixed-address 192.168.14.47;
+          }
+          host mmac-47 {
+               hardware ethernet 00:0a:95:b6:09:38;
+               fixed-address 192.168.14.48;
+          }
+          host mmac-48 {
+               hardware ethernet 00:0d:93:29:bb:fe;
+               fixed-address 192.168.14.49;
+          }
+          host mmac-49 {
+               hardware ethernet 00:0a:95:aa:61:7e;
+               fixed-address 192.168.14.50;
+          }
+          host mmac-50 {
+               hardware ethernet 00:0a:95:c9:32:fa;
+               fixed-address 192.168.14.51;
+          }
+          host mmac-51 {
+               hardware ethernet 00:0a:95:c9:19:58;
+               fixed-address 192.168.14.52;
+          }
+          host mmac-52 {
+               hardware ethernet 00:0a:95:af:7a:d8;
+               fixed-address 192.168.14.53;
+          }
+          host mmac-53 {
+               hardware ethernet 00:0a:95:cb:26:68;
+               fixed-address 192.168.14.54;
+          }
+          host mmac-54 {
+               hardware ethernet 00:0a:95:c9:2c:3c;
+               fixed-address 192.168.14.55;
+          }
+          host mmac-55 {
+               hardware ethernet 00:0a:95:a6:07:12;
+               fixed-address 192.168.14.56;
+          }
+          host mmac-56 {
+               hardware ethernet 00:0d:93:29:b9:96;
+               fixed-address 192.168.14.57;
+          }
+          host mmac-57 {
+               hardware ethernet 00:0d:93:29:ba:0c;
+               fixed-address 192.168.14.58;
+          }
+          host mmac-58 {
+               hardware ethernet 00:0d:93:29:b8:28;
+               fixed-address 192.168.14.59;
+          }
+          host mmac-59 {
+               hardware ethernet 00:0a:95:d2:a6:16;
+               fixed-address 192.168.14.60;
+          }
+          host mmac-60 {
+               hardware ethernet 00:0a:95:b7:68:24;
+               fixed-address 192.168.14.61;
+          }
+          host mmac-61 {
+               hardware ethernet 00:0a:95:d2:a5:8e;
+               fixed-address 192.168.14.62;
+          }
+          host mmac-62 {
+               hardware ethernet 00:0a:95:af:82:90;
+               fixed-address 192.168.14.63;
+          }
+          host mmac-63 {
+               hardware ethernet 00:0d:93:c0:6b:78;
+               fixed-address 192.168.14.64;
+          }
+          host mmac-64 {
+               hardware ethernet 00:0a:95:b7:7b:18;
+               fixed-address 192.168.14.65;
+          }
+          host mmac-65 {
+               hardware ethernet 00:0a:95:d2:9f:3c;
+               fixed-address 192.168.14.66;
+          }
+          host mmac-66 {
+               hardware ethernet 00:14:51:1e:a4:68;
+               fixed-address 192.168.14.67;
+          }
+          host mmac-67 {
+               hardware ethernet 00:0a:95:a7:b2:94;
+               fixed-address 192.168.14.68;
+          }
+          host mmac-68 {
+               hardware ethernet 00:0a:95:d9:71:da;
+               fixed-address 192.168.14.69;
+          }
+          host mmac-69 {
+               hardware ethernet 00:0d:93:c0:69:90;
+               fixed-address 192.168.14.70;
+          }
+          host mmac-70 {
+               hardware ethernet 00:0a:95:cc:41:84;
+               fixed-address 192.168.14.71;
+          }
+          host mmac-71 {
+               hardware ethernet 00:0a:95:b0:72:04;
+               fixed-address 192.168.14.72;
+          }
+          host mmac-72 {
+               hardware ethernet 00:0a:95:aa:62:6c;
+               fixed-address 192.168.14.73;
+          }
+          host mmac-73 {
+               hardware ethernet 00:0a:95:c9:31:b4;
+               fixed-address 192.168.14.74;
+          }
+          host mmac-74 {
+               hardware ethernet 00:0a:95:d9:6a:f2;
+               fixed-address 192.168.14.75;
+          }
+          host mmac-75 {
+               hardware ethernet 00:0a:95:af:8d:22;
+               fixed-address 192.168.14.76;
+          }
+          host mmac-76 {
+               hardware ethernet 00:0a:95:c9:1f:7c;
+               fixed-address 192.168.14.77;
+          }
+          host mmac-77 {
+               hardware ethernet 00:0a:95:be:32:ee;
+               fixed-address 192.168.14.78;
+          }
+          host mmac-78 {
+               hardware ethernet 00:0a:95:ae:49:b4;
+               fixed-address 192.168.14.79;
+          }
+          host mmac-79 {
+               hardware ethernet 00:0a:95:b7:70:74;
+               fixed-address 192.168.14.80;
+          }
+          host mmac-80 {
+               hardware ethernet 00:0d:93:c0:66:4e;
+               fixed-address 192.168.14.81;
+          }
+          host mcmac-1 {
+               hardware ethernet 00:0d:93:29:b6:a8;
+               fixed-address 192.168.14.109;
+          }
+          host mcmac-2 {
+               hardware ethernet 00:0a:95:b7:8f:dc;
+               fixed-address 192.168.14.110;
+          }
+          host miemac-1 {
+               hardware ethernet 00:11:24:3d:59:d4;
+               fixed-address 192.168.14.119;
+          }
+          host miemac-2 {
+               hardware ethernet 00:11:24:3e:16:2c;
+               fixed-address 192.168.14.120;
+          }
+          host miemac-3 {
+               hardware ethernet 00:11:24:3b:0f:5e;
+               fixed-address 192.168.14.121;
+          }
+          host miemac-4 {
+               hardware ethernet 00:0a:95:93:64:32;
+               fixed-address 192.168.14.122;
+          }
+          host miemac-5 {
+               hardware ethernet 00:0a:95:85:6b:3a;
+               fixed-address 192.168.14.123;
+          }
+          host miemac-6 {
+               hardware ethernet 00:0a:95:a1:b3:ce;
+               fixed-address 192.168.14.124;
+          }
+          host mvmac-1 {
+               hardware ethernet 00:0a:95:ae:ba:50;
+               fixed-address 192.168.14.127;
+          }
+          host mvmac-2 {
+               hardware ethernet 00:0a:95:a7:ee:1a;
+               fixed-address 192.168.14.128;
+          }
+          host mvmac-3 {
+               hardware ethernet 00:0a:95:a6:c2:7c;
+               fixed-address 192.168.14.129;
+          }
+          host mvmac-4 {
+               hardware ethernet 00:0a:95:cb:73:5a;
+               fixed-address 192.168.14.130;
+          }
+          host mvmac-5 {
+               hardware ethernet 00:0a:95:b9:ad:ba;
+               fixed-address 192.168.14.131;
+          }
+          host mvmac-6 {
+               hardware ethernet 00:0d:93:c0:66:a6;
+               fixed-address 192.168.14.132;
+          }
+          host mac1705b {
+               hardware ethernet 00:0a:95:a8:41:e8;
+               fixed-address 192.168.14.133;
+          }
+          host mac1715 {
+               hardware ethernet 00:0a:95:a7:30:84;
+               fixed-address 192.168.14.136;
+          }
+          host mac1725 {
+               hardware ethernet 00:0a:95:cb:71:88;
+               fixed-address 192.168.14.137;
+          }
+          host mfamac-1 {
+               hardware ethernet 00:0d:93:c0:6c:8a;
+               fixed-address 192.168.14.138;
+          }
+          host mmla-1 {
+               hardware ethernet 00:16:cb:92:14:ea;
+               fixed-address 192.168.14.139;
+          }
+          host mmla-2 {
+               hardware ethernet 00:16:cb:85:85:3d;
+               fixed-address 192.168.14.140;
+          }
+          host mmla-3 {
+               hardware ethernet 00:16:cb:90:ff:d2;
+               fixed-address 192.168.14.141;
+          }
+          host mmla-4 {
+               hardware ethernet 00:16:cb:92:19:b0;
+               fixed-address 192.168.14.142;
+          }
+          host mmla-5 {
+               hardware ethernet 00:16:cb:91:02:eb;
+               fixed-address 192.168.14.143;
+          }
+          host mmla-6 {
+               hardware ethernet 00:16:cb:92:12:ff;
+               fixed-address 192.168.14.144;
+          }
+          host mmla-7 {
+               hardware ethernet 00:16:cb:92:13:8a;
+               fixed-address 192.168.14.145;
+          }
+          host mmla-8 {
+               hardware ethernet 00:16:cb:91:08:8c;
+               fixed-address 192.168.14.146;
+          }
+          host mmla-9 {
+               hardware ethernet 00:16:cb:c0:ef:85;
+               fixed-address 192.168.14.147;
+          }
+          host mmla-10 {
+               hardware ethernet 00:16:cb:92:12:d7;
+               fixed-address 192.168.14.148;
+          }
+          host mmla-11 {
+               hardware ethernet 00:16:cb:c0:d7:39;
+               fixed-address 192.168.14.149;
+          }
+          host mmla-12 {
+               hardware ethernet 00:14:51:d4:78:93;
+               fixed-address 192.168.14.150;
+          }
+          host mmla-13 {
+               hardware ethernet 00:16:cb:92:14:28;
+               fixed-address 192.168.14.151;
+          }
+          host mmla-14 {
+               hardware ethernet 00:16:cb:c0:63:d1;
+               fixed-address 192.168.14.152;
+          }
+          host mmla-15 {
+               hardware ethernet 00:16:cb:92:12:ea;
+               fixed-address 192.168.14.153;
+          }
+          host mmla-16 {
+               hardware ethernet 00:16:cb:c0:63:d2;
+               fixed-address 192.168.14.154;
+          }
+          host mmla-17 {
+               hardware ethernet 00:16:cb:95:e7:1a;
+               fixed-address 192.168.14.155;
+          }
+          host mmla-18 {
+               hardware ethernet 00:16:cb:c0:de:b6;
+               fixed-address 192.168.14.156;
+          }
+          host mmla-19 {
+               hardware ethernet 00:16:cb:85:69:f5;
+               fixed-address 192.168.14.157;
+          }
+          host mmla-20 {
+               hardware ethernet 00:16:cb:92:17:5b;
+               fixed-address 192.168.14.158;
+          }
+          host mmla-21 {
+               hardware ethernet 00:16:cb:92:12:f8;
+               fixed-address 192.168.14.159;
+          }
+          host mmlb-1 {
+               hardware ethernet 00:16:cb:90:ff:7f;
+               fixed-address 192.168.14.161;
+          }
+          host mmlb-2 {
+               hardware ethernet 00:16:cb:c0:fa:9f;
+               fixed-address 192.168.14.162;
+          }
+          host mmlb-3 {
+               hardware ethernet 00:16:cb:c0:db:ce;
+               fixed-address 192.168.14.163;
+          }
+          host mmlb-4 {
+               hardware ethernet 00:16:cb:c0:d1:4d;
+               fixed-address 192.168.14.164;
+          }
+          host mmlb-5 {
+               hardware ethernet 00:16:cb:90:ff:88;
+               fixed-address 192.168.14.165;
+          }
+          host mmlb-6 {
+               hardware ethernet 00:16:cb:92:1a:16;
+               fixed-address 192.168.14.166;
+          }
+          host mmlb-7 {
+               hardware ethernet 00:16:cb:95:f2:e9;
+               fixed-address 192.168.14.167;
+          }
+          host mmlb-8 {
+               hardware ethernet 00:16:cb:83:e9:e4;
+               fixed-address 192.168.14.168;
+          }
+          host mmlb-9 {
+               hardware ethernet 00:16:cb:c0:64:d0;
+               fixed-address 192.168.14.169;
+          }
+          host mmlb-10 {
+               hardware ethernet 00:16:cb:c0:fd:73;
+               fixed-address 192.168.14.170;
+          }
+          host mmlb-11 {
+               hardware ethernet 00:16:cb:92:15:18;
+               fixed-address 192.168.14.171;
+          }
+          host mmlb-12 {
+               hardware ethernet 00:16:cb:92:14:0d;
+               fixed-address 192.168.14.172;
+          }
+          host mmlb-13 {
+               hardware ethernet 00:16:cb:88:92:82;
+               fixed-address 192.168.14.173;
+          }
+          host mmlb-14 {
+               hardware ethernet 00:16:cb:92:16:24;
+               fixed-address 192.168.14.174;
+          }
+          host mmlb-15 {
+               hardware ethernet 00:16:cb:c0:e7:75;
+               fixed-address 192.168.14.175;
+          }
+          host mmlb-16 {
+               hardware ethernet 00:16:cb:92:12:8b;
+               fixed-address 192.168.14.176;
+          }
+          host mmlb-17 {
+               hardware ethernet 00:16:cb:92:12:b3;
+               fixed-address 192.168.14.177;
+          }
+          host mmlb-18 {
+               hardware ethernet 00:16:cb:95:f6:e6;
+               fixed-address 192.168.14.178;
+          }
+          host mmlb-19 {
+               hardware ethernet 00:16:cb:92:15:11;
+               fixed-address 192.168.14.179;
+          }
+          host mmlb-20 {
+               hardware ethernet 00:16:cb:95:f2:80;
+               fixed-address 192.168.14.180;
+          }
+          host mmlb-21 {
+               hardware ethernet 00:16:cb:92:19:cf;
+               fixed-address 192.168.14.181;
+          }
+          host mmlb-22 {
+               hardware ethernet 00:16:cb:91:01:a8;
+               fixed-address 192.168.14.182;
+          }
+          host mmlb-23 {
+               hardware ethernet 00:16:cb:92:15:0a;
+               fixed-address 192.168.14.183;
+          }
+          host mmlb-24 {
+               hardware ethernet 00:16:cb:92:19:c0;
+               fixed-address 192.168.14.184;
+          }
+          host mmlb-25 {
+               hardware ethernet 00:16:cb:90:ff:51;
+               fixed-address 192.168.14.185;
+          }
+          host mmlb-26 {
+               hardware ethernet 00:16:cb:c0:ab:35;
+               fixed-address 192.168.14.186;
+          }
+          host mmlb-27 {
+               hardware ethernet 00:16:cb:c0:d8:17;
+               fixed-address 192.168.14.187;
+          }
+          host mmlb-28 {
+               hardware ethernet 00:16:cb:c0:dd:e6;
+               fixed-address 192.168.14.188;
+          }
+          host mmlb-29 {
+               hardware ethernet 00:16:cb:92:15:1f;
+               fixed-address 192.168.14.189;
+          }
+          host mmlb-30 {
+               hardware ethernet 00:16:cb:92:19:e5;
+               fixed-address 192.168.14.190;
+          }
+          host mmlb-31 {
+               hardware ethernet 00:16:cb:92:14:cd;
+               fixed-address 192.168.14.191;
+          }
+          host mmlb-32 {
+               hardware ethernet 00:16:cb:c0:e2:f6;
+               fixed-address 192.168.14.192;
+          }
+          host mmlb-33 {
+               hardware ethernet 00:16:cb:c0:ab:50;
+               fixed-address 192.168.14.193;
+          }
+          host mmlb-34 {
+               hardware ethernet 00:16:cb:89:f2:2d;
+               fixed-address 192.168.14.194;
+          }
+          host mmlb-35 {
+               hardware ethernet 00:16:cb:92:1a:12;
+               fixed-address 192.168.14.195;
+          }
+          host mmlb-36 {
+               hardware ethernet 00:16:cb:95:f1:a9;
+               fixed-address 192.168.14.196;
+          }
+          host miemac-7 {
+               hardware ethernet 00:0d:93:64:ea:3e;
+               fixed-address 192.168.14.200;
+          }
+          host m-1705a-sch {
+               hardware ethernet 00:0d:93:7a:cc:38;
+               fixed-address 192.168.14.229;
+          }
+          host m-debug-1 {
+               hardware ethernet 00:30:65:7d:59:58;
+               fixed-address 192.168.14.230;
+          }
+          host m-debug-2 {
+               hardware ethernet 00:03:93:52:bf:a4;
+               fixed-address 192.168.14.231;
+          }
+          host m-debug-3 {
+               hardware ethernet 00:30:65:f1:ba:c0;
+               fixed-address 192.168.14.232;
+          }
+          host m-debug-4 {
+               hardware ethernet 00:03:93:52:a7:a4;
+               fixed-address 192.168.14.233;
+          }
+          host m-debug-5 {
+               hardware ethernet 00:30:65:f1:ba:50;
+               fixed-address 192.168.14.234;
+          }
+          host m-debug-6 {
+               hardware ethernet 00:30:65:f1:bb:88;
+               fixed-address 192.168.14.235;
+          }
+          host m-debug-7 {
+               hardware ethernet 00:03:93:52:a1:c8;
+               fixed-address 192.168.14.236;
+          }
+          host m-test-ksk-auth {
+               hardware ethernet 00:0a:95:a1:b1:98;
+               fixed-address 192.168.14.240;
+          }
+          host m-test-ksk-open {
+               hardware ethernet 00:0a:95:8e:d5:a6;
+               fixed-address 192.168.14.241;
+          }
+          host m-test-ksk-proxy {
+               hardware ethernet 00:0a:95:a1:b0:32;
+               fixed-address 192.168.14.242;
+          }
+          host m-test-lab-1705a {
+               hardware ethernet 00:0a:95:6f:91:94;
+               fixed-address 192.168.14.243;
+          }
+          host m-test-lab-1745 {
+               hardware ethernet 00:0a:95:7d:eb:72;
+               fixed-address 192.168.14.244;
+          }
+          host m-test-lab-video {
+               hardware ethernet 00:0a:95:93:65:f8;
+               fixed-address 192.168.14.245;
+          }
+          host m-test-svisor {
+               hardware ethernet 00:0a:95:97:9f:38;
+               fixed-address 192.168.14.246;
+          }
+          host m-img-ppc-lab {
+               hardware ethernet 00:03:93:6f:3c:48;
+               fixed-address 192.168.14.249;
+          }
+          host m-img-ppc-vid {
+               hardware ethernet 00:03:93:7d:f6:58;
+               fixed-address 192.168.14.250;
+          }
+          host m-img-int-lab {
+               hardware ethernet 00:16:cb:a3:a7:03;
+               fixed-address 192.168.14.251;
+          }
+          host m-keyshadow {
+               hardware ethernet 00:30:65:f1:b9:74;
+               fixed-address 192.168.14.253;
+          }
+          host powerbook-1 {
+               hardware ethernet 00:11:24:36:35:c2;
+               fixed-address 192.168.14.201;
+          }
+          host powerbook-2 {
+               hardware ethernet 00:0d:93:76:7d:5e;
+               fixed-address 192.168.14.202;
+          }
+          host powerbook-3 {
+               hardware ethernet 00:0d:93:76:9e:92;
+               fixed-address 192.168.14.203;
+          }
+          host powerbook-4 {
+               hardware ethernet 00:11:24:36:2e:14;
+               fixed-address 192.168.14.204;
+          }
+          host powerbook-5 {
+               hardware ethernet 00:0d:93:76:95:c4;
+               fixed-address 192.168.14.205;
+          }
+          host powerbook-6 {
+               hardware ethernet 00:11:24:36:43:f2;
+               fixed-address 192.168.14.206;
+          }
+          host powerbook-7 {
+               hardware ethernet 00:0d:93:76:9d:b0;
+               fixed-address 192.168.14.207;
+          }
+          host powerbook-8 {
+               hardware ethernet 00:11:24:36:36:f0;
+               fixed-address 192.168.14.208;
+          }
+          host powerbook-9 {
+               hardware ethernet 00:11:24:36:2f:86;
+               fixed-address 192.168.14.209;
+          }
+          host powerbook-10 {
+               hardware ethernet 00:11:24:36:2f:c6;
+               fixed-address 192.168.14.210;
+          }
+          host powerbook-11 {
+               hardware ethernet 00:0d:93:76:98:c4;
+               fixed-address 192.168.14.211;
+          }
+          host powerbook-12 {
+               hardware ethernet 00:11:24:36:30:00;
+               fixed-address 192.168.14.212;
+          }
+          host powerbook-13 {
+               hardware ethernet 00:11:24:36:36:d2;
+               fixed-address 192.168.14.213;
+          }
+          host powerbook-14 {
+               hardware ethernet 00:0d:93:76:9c:e6;
+               fixed-address 192.168.14.214;
+          }
+          host powerbook-15 {
+               hardware ethernet 00:0d:93:76:99:2a;
+               fixed-address 192.168.14.215;
+          }
+          host powerbook-16 {
+               hardware ethernet 00:11:24:36:36:b8;
+               fixed-address 192.168.14.216;
+          }
+          host powerbook-17 {
+               hardware ethernet 00:11:24:35:b4:48;
+               fixed-address 192.168.14.217;
+          }
+          host powerbook-18 {
+               hardware ethernet 00:0d:93:76:84:98;
+               fixed-address 192.168.14.218;
+          }
+          host powerbook-19 {
+               hardware ethernet 00:0d:93:76:9d:78;
+               fixed-address 192.168.14.219;
+          }
+          host powerbook-20 {
+               hardware ethernet 00:11:24:35:ae:d0;
+               fixed-address 192.168.14.220;
+          }
+          host powerbook-21 {
+               hardware ethernet 00:11:24:36:44:2c;
+               fixed-address 192.168.14.221;
+          }
+          host powerbook-22 {
+               hardware ethernet 00:0d:93:76:98:48;
+               fixed-address 192.168.14.222;
+          }
+          host powerbook-23 {
+               hardware ethernet 00:0d:93:76:9b:90;
+               fixed-address 192.168.14.223;
+          }
+          host powerbook-24 {
+               hardware ethernet 00:11:24:36:2f:ce;
+               fixed-address 192.168.14.224;
+          }
+          host m-ipod {
+               hardware ethernet 00:0a:95:7d:ae:fe;
+               fixed-address 192.168.14.226;
+          }
+}
+
+### PXE Group 'UN-PXE' ###
+group {
+          filename "/tftproot/pxelinux.0";
+          next-server 192.168.15.254;
+
+          ## Static Hosts Assigned to PXE Group ##
+          host unsc-01 {
+               hardware ethernet 00:1b:21:1d:42:ef;
+               fixed-address 192.168.18.123;
+          }
+          host unpc-92 {
+               hardware ethernet 00:0E:0C:B7:2D:34;
+               fixed-address 192.168.18.102;
+          }
+          host unpc-89 {
+               hardware ethernet 00:0E:0C:B6:10:48;
+               fixed-address 192.168.18.99;
+          }
+          host PStaff-112 {
+               hardware ethernet 00:02:B3:A3:59:00;
+               fixed-address 192.168.16.255;
+          }
+          host unpc-78 {
+               hardware ethernet 00:0E:0C:B3:03:BD;
+               fixed-address 192.168.18.88;
+          }
+          host UNPC-59 {
+               hardware ethernet 00:0e:0c:cf:86:95;
+               fixed-address 192.168.18.69;
+          }
+          host UNPC-58 {
+               hardware ethernet 00:0e:0c:cf:84:c0;
+               fixed-address 192.168.18.68;
+          }
+          host UNPC-57 {
+               hardware ethernet 00:0e:0c:cf:87:25;
+               fixed-address 192.168.18.67;
+          }
+          host UNPC-56 {
+               hardware ethernet 00:1b:21:01:65:df;
+               fixed-address 192.168.18.66;
+          }
+          host UNPC-55 {
+               hardware ethernet 00:0e:0c:cf:7f:0b;
+               fixed-address 192.168.18.65;
+          }
+          host UNPC-54 {
+               hardware ethernet 00:1b:21:01:67:de;
+               fixed-address 192.168.18.64;
+          }
+          host UNPC-53 {
+               hardware ethernet 00:0e:0c:cf:7f:0c;
+               fixed-address 192.168.18.63;
+          }
+          host UNPC-52 {
+               hardware ethernet 00:1b:21:01:68:b5;
+               fixed-address 192.168.18.62;
+          }
+          host UNPC-51 {
+               hardware ethernet 00:0e:0c:cf:80:f4;
+               fixed-address 192.168.18.61;
+          }
+          host UNPC-50 {
+               hardware ethernet 00:1b:21:01:6b:27;
+               fixed-address 192.168.18.60;
+          }
+          host UNPC-49 {
+               hardware ethernet 00:0e:0c:cf:81:18;
+               fixed-address 192.168.18.59;
+          }
+          host UNPC-48 {
+               hardware ethernet 00:0e:0c:cf:86:1c;
+               fixed-address 192.168.18.58;
+          }
+          host UNPC-47 {
+               hardware ethernet 00:0e:0c:cf:86:1b;
+               fixed-address 192.168.18.57;
+          }
+          host UNPC-46 {
+               hardware ethernet 00:1b:21:01:66:43;
+               fixed-address 192.168.18.56;
+          }
+          host UNPC-45 {
+               hardware ethernet 00:0e:0c:cf:84:9c;
+               fixed-address 192.168.18.55;
+          }
+          host UNPC-43 {
+               hardware ethernet 00:1b:21:01:69:54;
+               fixed-address 192.168.18.53;
+          }
+          host UNPC-42 {
+               hardware ethernet 00:0E:0C:CF:E9:01;
+               fixed-address 192.168.18.52;
+          }
+          host UNPC-41 {
+               hardware ethernet 00:1b:21:01:69:1a;
+               fixed-address 192.168.18.51;
+          }
+          host UNPC-21 {
+               hardware ethernet 00:1b:21:16:84:e3;
+               fixed-address 192.168.18.31;
+          }
+          host UNPC-20 {
+               hardware ethernet 00:1b:21:1b:47:99;
+               fixed-address 192.168.18.30;
+          }
+          host UNPC-77 {
+               hardware ethernet 00:0E:0C:B7:32:ED;
+               fixed-address 192.168.18.87;
+          }
+          host UNPC-19 {
+               hardware ethernet 00:1b:21:1b:44:eb;
+               fixed-address 192.168.18.29;
+          }
+          host UNPC-18 {
+               hardware ethernet 00:1b:21:1d:58:33;
+               fixed-address 192.168.18.28;
+          }
+          host UNPC-76 {
+               hardware ethernet 00:0E:0C:B7:2B:8C;
+               fixed-address 192.168.18.86;
+          }
+          host UNPC-17 {
+               hardware ethernet 00:1b:21:14:ca:57;
+               fixed-address 192.168.18.27;
+          }
+          host UNPC-75 {
+               hardware ethernet 00:0E:0C:B7:2E:29;
+               fixed-address 192.168.18.85;
+          }
+          host UNPC-16 {
+               hardware ethernet 00:1b:21:1b:47:97;
+               fixed-address 192.168.18.26;
+          }
+          host UNPC-74 {
+               hardware ethernet 00:0E:0C:B6:10:45;
+               fixed-address 192.168.18.84;
+          }
+          host UNPC-15 {
+               hardware ethernet 00:1b:21:1b:48:e2;
+               fixed-address 192.168.18.25;
+          }
+          host UNPC-73 {
+               hardware ethernet 00:0E:0C:B7:2E:F2;
+               fixed-address 192.168.18.83;
+          }
+          host UNPC-14 {
+               hardware ethernet 00:1b:21:1d:57:99;
+               fixed-address 192.168.18.24;
+          }
+          host UNPC-13 {
+               hardware ethernet 00:1b:21:14:b5:6f;
+               fixed-address 192.168.18.23;
+          }
+          host UNPC-72 {
+               hardware ethernet 00:0E:0C:B5:5C:7B;
+               fixed-address 192.168.18.82;
+          }
+          host UNPC-12 {
+               hardware ethernet 00:1b:21:1d:57:69;
+               fixed-address 192.168.18.22;
+          }
+          host UNPC-05 {
+               hardware ethernet 00:1b:21:16:84:dd;
+               fixed-address 192.168.18.15;
+          }
+          host UNPC-06 {
+               hardware ethernet 00:1b:21:1d:41:cb;
+               fixed-address 192.168.18.16;
+          }
+          host UNPC-71 {
+               hardware ethernet 00:0E:0C:B7:2F:14;
+               fixed-address 192.168.18.81;
+          }
+          host UNPC-11 {
+               hardware ethernet 00:1b:21:1d:58:76;
+               fixed-address 192.168.18.21;
+          }
+          host UNPC-70 {
+               hardware ethernet 00:0E:0C:BC:27:BB;
+               fixed-address 192.168.18.80;
+          }
+          host UNPC-10 {
+               hardware ethernet 00:1b:21:1d:4e:82;
+               fixed-address 192.168.18.20;
+          }
+          host UNPC-09 {
+               hardware ethernet 00:1b:21:14:bc:a2;
+               fixed-address 192.168.18.19;
+          }
+          host UNPC-69 {
+               hardware ethernet 00:0E:0C:B6:16:A0;
+               fixed-address 192.168.18.79;
+          }
+          host UNPC-08 {
+               hardware ethernet 00:1b:21:1d:44:8e;
+               fixed-address 192.168.18.18;
+          }
+          host UNPC-68 {
+               hardware ethernet 00:0E:0C:B7:2F:FB;
+               fixed-address 192.168.18.78;
+          }
+          host UNPC-07 {
+               hardware ethernet 00:1b:21:1d:42:2f;
+               fixed-address 192.168.18.17;
+          }
+          host UNPC-67 {
+               hardware ethernet 00:0E:0C:B7:32:85;
+               fixed-address 192.168.18.77;
+          }
+          host UNPC-65 {
+               hardware ethernet 00:0e:0c:cf:81:97;
+               fixed-address 192.168.18.75;
+          }
+          host UNPC-04 {
+               hardware ethernet 00:1b:21:1d:57:b8;
+               fixed-address 192.168.18.14;
+          }
+          host UNPC-64 {
+               hardware ethernet 00:1b:21:01:68:ee;
+               fixed-address 192.168.18.74;
+          }
+          host UNPC-03 {
+               hardware ethernet 00:1b:21:1b:48:e7;
+               fixed-address 192.168.18.13;
+          }
+          host UNPC-63 {
+               hardware ethernet 00:0e:0c:cf:7f:09;
+               fixed-address 192.168.18.73;
+          }
+          host UNPC-02 {
+               hardware ethernet 00:1b:21:16:84:e0;
+               fixed-address 192.168.18.12;
+          }
+          host UNPC-01 {
+               hardware ethernet 00:1b:21:1b:45:5f;
+               fixed-address 192.168.18.11;
+          }
+          host UNPC-40 {
+               hardware ethernet 00:0e:0c:cf:87:37;
+               fixed-address 192.168.18.50;
+          }
+          host UNPC-62 {
+               hardware ethernet 00:0e:0c:cf:86:05;
+               fixed-address 192.168.18.72;
+          }
+          host UNPC-39 {
+               hardware ethernet 00:0e:0c:cf:80:ea;
+               fixed-address 192.168.18.49;
+          }
+          host UNPC-61 {
+               hardware ethernet 00:0e:0c:cf:7e:ff;
+               fixed-address 192.168.18.71;
+          }
+          host UNPC-60 {
+               hardware ethernet 00:0e:0c:cf:84:cc;
+               fixed-address 192.168.18.70;
+          }
+          host UNPC-91 {
+               hardware ethernet 00:0E:0C:B7:2B:B3;
+               fixed-address 192.168.18.101;
+          }
+          host UNPC-38 {
+               hardware ethernet 00:0e:0c:cf:86:81;
+               fixed-address 192.168.18.48;
+          }
+          host UNPC-22 {
+               hardware ethernet 00:1b:21:1d:57:5b;
+               fixed-address 192.168.18.32;
+          }
+          host UNPC-37 {
+               hardware ethernet 00:0E:0C:CF:86:10;
+               fixed-address 192.168.18.47;
+          }
+          host UNPC-88 {
+               hardware ethernet 00:0E:0C:B7:28:A4;
+               fixed-address 192.168.18.98;
+          }
+          host UNPC-87 {
+               hardware ethernet 00:0E:0C:B6:11:1D;
+               fixed-address 192.168.18.97;
+          }
+          host UNPC-34 {
+               hardware ethernet 00:1b:21:14:bc:bd;
+               fixed-address 192.168.18.44;
+          }
+          host UNPC-33 {
+               hardware ethernet 00:1b:21:16:85:ab;
+               fixed-address 192.168.18.43;
+          }
+          host UNPC-85 {
+               hardware ethernet 00:0E:0C:B6:5D:35;
+               fixed-address 192.168.18.95;
+          }
+          host UNPC-84 {
+               hardware ethernet 00:0E:0C:B7:2D:33;
+               fixed-address 192.168.18.94;
+          }
+          host UNPC-32 {
+               hardware ethernet 00:1b:21:1b:46:10;
+               fixed-address 192.168.18.42;
+          }
+          host UNPC-31 {
+               hardware ethernet 00:1b:21:16:7b:b9;
+               fixed-address 192.168.18.41;
+          }
+          host UNPC-30 {
+               hardware ethernet 00:1b:21:1d:57:5f;
+               fixed-address 192.168.18.40;
+          }
+          host UNPC-83 {
+               hardware ethernet 00:0E:0C:B6:11:52;
+               fixed-address 192.168.18.93;
+          }
+          host UNPC-29 {
+               hardware ethernet 00:1b:21:16:85:c4;
+               fixed-address 192.168.18.39;
+          }
+          host UNPC-28 {
+               hardware ethernet 00:1b:21:16:85:05;
+               fixed-address 192.168.18.38;
+          }
+          host UNPC-81 {
+               hardware ethernet 00:1b:21:0c:cd:df;
+               fixed-address 192.168.18.91;
+          }
+          host UNPC-27 {
+               hardware ethernet 00:1b:21:16:84:df;
+               fixed-address 192.168.18.37;
+          }
+          host UNPC-26 {
+               hardware ethernet 00:1b:21:1d:44:3a;
+               fixed-address 192.168.18.36;
+          }
+          host UNPC-66 {
+               hardware ethernet 00:0E:0C:B7:3D:9E;
+               fixed-address 192.168.18.76;
+          }
+          host UNPC-79 {
+               hardware ethernet 00:0E:0C:B7:2E:7B;
+               fixed-address 192.168.18.89;
+          }
+          host UNPC-25 {
+               hardware ethernet 00:1b:21:1d:44:87;
+               fixed-address 192.168.18.35;
+          }
+          host UNPC-24 {
+               hardware ethernet 00:1b:21:14:ca:56;
+               fixed-address 192.168.18.34;
+          }
+          host unpc-80 {
+               hardware ethernet 00:0e:0c:dc:cf:17;
+               fixed-address 192.168.18.90;
+          }
+          host UNPC-90 {
+               hardware ethernet 00:0E:0C:B6:5D:34;
+               fixed-address 192.168.18.100;
+          }
+          host unsc-02 {
+               hardware ethernet 00:1b:21:1d:58:6e;
+               fixed-address 192.168.18.124;
+          }
+          host UNPC-23 {
+               hardware ethernet 00:1b:21:1b:48:e5;
+               fixed-address 192.168.18.33;
+          }
+          host unad-01 {
+               hardware ethernet 00:0E:0c:b6:10:e7;
+               fixed-address 192.168.18.121;
+          }
+          host unad-02 {
+               hardware ethernet 00:0E:0c:b6:11:a2;
+               fixed-address 192.168.18.122;
+          }
+          host unctr-1 {
+               hardware ethernet 00:1b:21:1d:59:32;
+               fixed-address 192.168.18.125;
+          }
+          host UNRS-1 {
+               hardware ethernet 00:02:b3:ac:e6:b0;
+               fixed-address 192.168.18.4;
+          }
+          host unpc-44 {
+               hardware ethernet 00:1b:21:01:69:d0;
+               fixed-address 192.168.18.54;
+          }
+          host new-test-z {
+               hardware ethernet 00:09:02:bb:ac:cc;
+               fixed-address 192.168.3.35;
+          }
+          host hostname00001 {
+               hardware ethernet 00:0a:b3:a0:00:5d;
+               fixed-address 192.168.10.243;
+          }
+          host UNPC-82 {
+               hardware ethernet 00:0E:0C:B7:32:17;
+               fixed-address 192.168.18.92;
+          }
+          host UNPC-86 {
+               hardware ethernet 00:0E:0C:B7:2F:6C;
+               fixed-address 192.168.18.96;
+          }
+          host ustaff-01 {
+               hardware ethernet 00:1B:21:01:68:EC;
+               fixed-address 192.168.18.6;
+          }
+          host UNPC-35 {
+               hardware ethernet 00:1b:21:1d:58:5d;
+               fixed-address 192.168.18.45;
+          }
+          host UNPC-36 {
+               hardware ethernet 00:1b:21:1d:5e:4f;
+               fixed-address 192.168.18.46;
+          }
+          host UNRS-2 {
+               hardware ethernet 00:02:B3:EB:0A:9E;
+               fixed-address 192.168.18.5;
+          }
+          host u-keyshadow {
+               hardware ethernet 00:30:65:ed:09:54;
+               fixed-address 192.168.18.131;
+          }
+          host u-dburrow {
+               hardware ethernet 00:0a:95:ba:b9:5c;
+               fixed-address 192.168.18.167;
+          }
+          host uscmac-1 {
+               hardware ethernet 00:16:cb:83:db:1c;
+               fixed-address 192.168.18.132;
+          }
+          host umac-1 {
+               hardware ethernet 00:11:24:3d:2a:ae;
+               fixed-address 192.168.18.133;
+          }
+          host umac-2 {
+               hardware ethernet 00:11:24:3c:02:26;
+               fixed-address 192.168.18.134;
+          }
+          host umac-3 {
+               hardware ethernet 00:11:24:38:c9:d6;
+               fixed-address 192.168.18.135;
+          }
+          host umac-4 {
+               hardware ethernet 00:11:24:39:9a:ac;
+               fixed-address 192.168.18.136;
+          }
+          host umac-5 {
+               hardware ethernet 00:11:24:3b:1a:16;
+               fixed-address 192.168.18.137;
+          }
+          host umac-6 {
+               hardware ethernet 00:0a:95:ae:94:64;
+               fixed-address 192.168.18.138;
+          }
+          host umac-7 {
+               hardware ethernet 00:0a:95:cc:3b:02;
+               fixed-address 192.168.18.139;
+          }
+          host umac-8 {
+               hardware ethernet 00:0a:95:b6:2c:92;
+               fixed-address 192.168.18.140;
+          }
+          host umac-9 {
+               hardware ethernet 00:0a:95:b0:6f:66;
+               fixed-address 192.168.18.141;
+          }
+          host umac-10 {
+               hardware ethernet 00:0a:95:ae:6a:dc;
+               fixed-address 192.168.18.142;
+          }
+          host umac-11 {
+               hardware ethernet 00:0d:93:4a:e5:98;
+               fixed-address 192.168.18.143;
+          }
+          host umac-12 {
+               hardware ethernet 00:0d:93:6c:f7:92;
+               fixed-address 192.168.18.144;
+          }
+          host umac-13 {
+               hardware ethernet 00:0a:95:cb:28:2c;
+               fixed-address 192.168.18.145;
+          }
+          host umac-14 {
+               hardware ethernet 00:0a:95:ba:6e:c8;
+               fixed-address 192.168.18.146;
+          }
+          host umac-15 {
+               hardware ethernet 00:0a:95:c9:16:ec;
+               fixed-address 192.168.18.147;
+          }
+          host umac-16 {
+               hardware ethernet 00:0a:95:cc:3a:c2;
+               fixed-address 192.168.18.148;
+          }
+          host umac-17 {
+               hardware ethernet 00:0a:95:8f:5a:54;
+               fixed-address 192.168.18.149;
+          }
+          host umac-18 {
+               hardware ethernet 00:0a:95:ba:a6:70;
+               fixed-address 192.168.18.150;
+          }
+          host umac-19 {
+               hardware ethernet 00:0a:95:c3:73:4e;
+               fixed-address 192.168.18.151;
+          }
+          host umac-20 {
+               hardware ethernet 00:0a:95:af:8b:4c;
+               fixed-address 192.168.18.152;
+          }
+          host umac-21 {
+               hardware ethernet 00:11:24:3a:ed:f6;
+               fixed-address 192.168.18.153;
+          }
+          host umac-22 {
+               hardware ethernet 00:11:24:38:df:7a;
+               fixed-address 192.168.18.154;
+          }
+          host umac-23 {
+               hardware ethernet 00:11:24:3c:79:aa;
+               fixed-address 192.168.18.155;
+          }
+          host umac-24 {
+               hardware ethernet 00:11:24:3c:65:f4;
+               fixed-address 192.168.18.156;
+          }
+          host umac-25 {
+               hardware ethernet 00:11:24:3c:85:d6;
+               fixed-address 192.168.18.157;
+          }
+          host umac-26 {
+               hardware ethernet 00:11:24:3c:31:30;
+               fixed-address 192.168.18.158;
+          }
+          host umac-27 {
+               hardware ethernet 00:11:24:3d:29:02;
+               fixed-address 192.168.18.159;
+          }
+          host umac-28 {
+               hardware ethernet 00:11:24:3d:e8:4a;
+               fixed-address 192.168.18.160;
+          }
+          host umac-29 {
+               hardware ethernet 00:11:24:3c:bf:5c;
+               fixed-address 192.168.18.161;
+          }
+          host umac-30 {
+               hardware ethernet 00:11:24:3d:e7:ae;
+               fixed-address 192.168.18.162;
+          }
+          host umac-31 {
+               hardware ethernet 00:16:cb:95:e4:70;
+               fixed-address 192.168.18.163;
+          }
+          host umac-32 {
+               hardware ethernet 00:16:cb:8c:f7:2e;
+               fixed-address 192.168.18.164;
+          }
+          host uiemac-1 {
+               hardware ethernet 00:0a:95:85:6b:88;
+               fixed-address 192.168.18.165;
+          }
+}
+
+### PXE Group 'RH-PXE' ###
+group {
+          filename "/tftproot/pxelinux.0";
+          next-server 192.168.15.254;
+
+          ## Static Hosts Assigned to PXE Group ##
+          host RLPC-22 {
+               hardware ethernet 00:1b:21:16:85:69;
+               fixed-address 192.168.241.152;
+          }
+          host RLPC-01 {
+               hardware ethernet 00:1b:21:01:66:b5;
+               fixed-address 192.168.241.131;
+          }
+          host RLPC-02 {
+               hardware ethernet 00:0e:0c:cf:86:b0;
+               fixed-address 192.168.241.132;
+          }
+          host RLPC-03 {
+               hardware ethernet 00:0e:0c:cf:86:86;
+               fixed-address 192.168.241.133;
+          }
+          host RLPC-04 {
+               hardware ethernet 00:0e:0c:cf:84:97;
+               fixed-address 192.168.241.134;
+          }
+          host RLPC-05 {
+               hardware ethernet 00:0e:0c:cf:81:15;
+               fixed-address 192.168.241.135;
+          }
+          host RLPC-06 {
+               hardware ethernet 00:0e:0c:cf:87:5a;
+               fixed-address 192.168.241.136;
+          }
+          host RLPC-07 {
+               hardware ethernet 00:1b:21:01:68:ba;
+               fixed-address 192.168.241.137;
+          }
+          host RLPC-08 {
+               hardware ethernet 00:1b:21:01:67:fc;
+               fixed-address 192.168.241.138;
+          }
+          host RLPC-09 {
+               hardware ethernet 00:0e:0c:cf:86:07;
+               fixed-address 192.168.241.139;
+          }
+          host RLPC-10 {
+               hardware ethernet 00:0e:0c:cf:88:b6;
+               fixed-address 192.168.241.140;
+          }
+          host RLPC-11 {
+               hardware ethernet 00:0e:0c:cf:80:e5;
+               fixed-address 192.168.241.141;
+          }
+          host RLPC-12 {
+               hardware ethernet 00:1b:21:01:69:a7;
+               fixed-address 192.168.241.142;
+          }
+          host RLPC-13 {
+               hardware ethernet 00:1b:21:01:67:db;
+               fixed-address 192.168.241.143;
+          }
+          host RLPC-14 {
+               hardware ethernet 00:1b:21:16:7a:3a;
+               fixed-address 192.168.241.144;
+          }
+          host RLPC-15 {
+               hardware ethernet 00:1b:21:14:bd:8c;
+               fixed-address 192.168.241.145;
+          }
+          host RLPC-16 {
+               hardware ethernet 00:1b:21:16:7b:c4;
+               fixed-address 192.168.241.146;
+          }
+          host RLPC-17 {
+               hardware ethernet 00:1b:21:16:84:dc;
+               fixed-address 192.168.241.147;
+          }
+          host RLPC-18 {
+               hardware ethernet 00:1b:21:1d:52:41;
+               fixed-address 192.168.241.148;
+          }
+          host RLPC-19 {
+               hardware ethernet 00:1b:21:1d:58:92;
+               fixed-address 192.168.241.149;
+          }
+          host RLPC-20 {
+               hardware ethernet 00:1b:21:1b:44:ec;
+               fixed-address 192.168.241.150;
+          }
+          host RLPC-21 {
+               hardware ethernet 00:1b:21:1b:46:0e;
+               fixed-address 192.168.241.151;
+          }
+          host RLPC-23 {
+               hardware ethernet 00:1b:21:1d:43:35;
+               fixed-address 192.168.241.153;
+          }
+          host RLPC-24 {
+               hardware ethernet 00:1b:21:16:84:d9;
+               fixed-address 192.168.241.154;
+          }
+          host RLPC-25 {
+               hardware ethernet 00:1b:21:1d:58:90;
+               fixed-address 192.168.241.155;
+          }
+          host RLPC-26 {
+               hardware ethernet 00:1b:21:1d:41:fe;
+               fixed-address 192.168.241.156;
+          }
+          host SLPC-01 {
+               hardware ethernet 00:1b:21:14:ca:53;
+               fixed-address 192.168.241.201;
+          }
+          host SLPC-02 {
+               hardware ethernet 00:1b:21:1d:44:3d;
+               fixed-address 192.168.241.202;
+          }
+          host SLPC-03 {
+               hardware ethernet 00:1b:21:1d:57:5c;
+               fixed-address 192.168.241.203;
+          }
+          host SLPC-04 {
+               hardware ethernet 00:1b:21:1b:48:e6;
+               fixed-address 192.168.241.204;
+          }
+          host SLPC-05 {
+               hardware ethernet 00:1b:21:1d:43:27;
+               fixed-address 192.168.241.205;
+          }
+          host SLPC-06 {
+               hardware ethernet 00:1b:21:1d:44:86;
+               fixed-address 192.168.241.206;
+          }
+          host SLPC-07 {
+               hardware ethernet 00:1b:21:1d:42:82;
+               fixed-address 192.168.241.207;
+          }
+          host SLPC-08 {
+               hardware ethernet 00:1b:21:1d:57:b9;
+               fixed-address 192.168.241.208;
+          }
+          host SLPC-09 {
+               hardware ethernet 00:1b:21:16:82:2d;
+               fixed-address 192.168.241.209;
+          }
+          host SLPC-10 {
+               hardware ethernet 00:1b:21:14:bc:c7;
+               fixed-address 192.168.241.210;
+          }
+          host RLCTR-1 {
+               hardware ethernet 00:1b:21:1d:4e:f3;
+               fixed-address 192.168.241.181;
+          }
+          host RSTAFF-01 {
+               hardware ethernet 00:1b:21:1d:57:8b;
+               fixed-address 192.168.241.182;
+          }
+          host RLAD-01 {
+               hardware ethernet 00:0e:0c:b6:16:36;
+               fixed-address 192.168.241.183;
+          }
+          host RLSC-01 {
+               hardware ethernet 00:1b:21:1c:46:36;
+               fixed-address 192.168.241.184;
+          }
+          host SLCTR-1 {
+               hardware ethernet 00:0E:0C:B6:16:14;
+               fixed-address 192.168.241.185;
+          }
+          host SLPC-11 {
+               hardware ethernet 00:1b:21:1d:57:65;
+               fixed-address 192.168.241.211;
+          }
+          host RLPC-27 {
+               hardware ethernet 00:1b:21:1b:47:84;
+               fixed-address 192.168.241.157;
+          }
+          host RLPC-28 {
+               hardware ethernet 00:1b:21:16:85:ae;
+               fixed-address 192.168.241.158;
+          }
+          host RLPC-29 {
+               hardware ethernet 00:1b:21:16:84:da;
+               fixed-address 192.168.241.159;
+          }
+          host RLPC-30 {
+               hardware ethernet 00:1b:21:16:85:02;
+               fixed-address 192.168.241.160;
+          }
+          host RLPC-31 {
+               hardware ethernet 00:1b:21:1d:43:39;
+               fixed-address 192.168.241.161;
+          }
+          host RLPC-32 {
+               hardware ethernet 00:0E:0C:B7:2E:EE;
+               fixed-address 192.168.241.162;
+          }
+          host RLPC-34 {
+               hardware ethernet 00:0E:0C:B6:15:9D;
+               fixed-address 192.168.241.164;
+          }
+          host RLPC-35 {
+               hardware ethernet 00:0E:0C:B6:5D:29;
+               fixed-address 192.168.241.165;
+          }
+          host RLPC-38 {
+               hardware ethernet 00:0E:0C:B7:2B:B4;
+               fixed-address 192.168.241.168;
+          }
+          host RLPC-39 {
+               hardware ethernet 00:0E:0C:B7:2D:77;
+               fixed-address 192.168.241.169;
+          }
+          host RLPC-40 {
+               hardware ethernet 00:0E:0C:B7:30:54;
+               fixed-address 192.168.241.170;
+          }
+          host RLPC-41 {
+               hardware ethernet 00:0E:0C:B7:2B:BA;
+               fixed-address 192.168.241.171;
+          }
+          host RLPC-42 {
+               hardware ethernet 00:0E:0C:B7:2B:A8;
+               fixed-address 192.168.241.172;
+          }
+          host RLPC-43 {
+               hardware ethernet 00:0E:0C:B6:16:B7;
+               fixed-address 192.168.241.173;
+          }
+          host RLPC-33 {
+               hardware ethernet 00:0E:0C:B7:2D:7B;
+               fixed-address 192.168.241.163;
+          }
+          host RLPC-36 {
+               hardware ethernet 00:0E:0C:B7:2F:AB;
+               fixed-address 192.168.241.166;
+          }
+          host RLPC-37 {
+               hardware ethernet 00:0E:0C:B6:5C:EF;
+               fixed-address 192.168.241.167;
+          }
+          host RLPC-44 {
+               hardware ethernet 00:0E:0C:B5:06:85;
+               fixed-address 192.168.241.174;
+          }
+          host srtrain.scl.utah.edu {
+               hardware ethernet 08:00:46:B6:C7:E3;
+               fixed-address 192.168.241.176;
+          }
+          host SLSC-01 {
+               hardware ethernet 00:1b:21:1d:4f:a2;
+               fixed-address 192.168.241.186;
+          }
+          host RSTAFF-03 {
+               hardware ethernet 00:60:08:17:0e:71;
+               fixed-address 192.168.241.177;
+          }
+          host RLRS-2 {
+               hardware ethernet 00:02:b3:a2:9d:fa;
+               fixed-address 192.168.241.187;
+          }
+          host RLRS-1 {
+               hardware ethernet 00:02:b3:d2:07:e6;
+               fixed-address 192.168.241.188;
+          }
+          host SLRS-1 {
+               hardware ethernet 00:02:B3:A2:B8:4A;
+               fixed-address 192.168.241.189;
+          }
+          host Outstaff-03 {
+               hardware ethernet 00:15:C5:4A:6F:3D;
+               fixed-address 192.168.241.178;
+          }
+          host slpc-13 {
+               hardware ethernet 00:1b:21:1d:4e:84;
+               fixed-address 192.168.241.213;
+          }
+          host smac-6 {
+               hardware ethernet 00:11:24:3a:f4:f3;
+               fixed-address 192.168.241.32;
+          }
+          host smac-5 {
+               hardware ethernet 00:11:24:3a:83:22;
+               fixed-address 192.168.241.31;
+          }
+          host smac-4 {
+               hardware ethernet 00:11:24:3b:ed:8c;
+               fixed-address 192.168.241.30;
+          }
+          host smac-2 {
+               hardware ethernet 00:11:24:3b:23:96;
+               fixed-address 192.168.241.28;
+          }
+          host smac-3 {
+               hardware ethernet 00:11:24:3e:15:86;
+               fixed-address 192.168.241.29;
+          }
+          host bmac-1 {
+               hardware ethernet 00:11:24:3c:67:b8;
+               fixed-address 192.168.241.5;
+          }
+          host bmac-2 {
+               hardware ethernet 00:11:24:3a:f5:14;
+               fixed-address 192.168.241.6;
+          }
+          host bmac-3 {
+               hardware ethernet 00:11:24:3c:b2:dc;
+               fixed-address 192.168.241.7;
+          }
+          host bmac-4 {
+               hardware ethernet 00:11:24:3c:32:c4;
+               fixed-address 192.168.241.8;
+          }
+          host bmac-5 {
+               hardware ethernet 00:11:24:3c:30:ba;
+               fixed-address 192.168.241.9;
+          }
+          host bmac-6 {
+               hardware ethernet 00:11:24:3a:f0:26;
+               fixed-address 192.168.241.10;
+          }
+          host bmac-7 {
+               hardware ethernet 00:11:24:3b:a1:5a;
+               fixed-address 192.168.241.11;
+          }
+          host bmac-8 {
+               hardware ethernet 00:11:24:3c:68:26;
+               fixed-address 192.168.241.12;
+          }
+          host bmac-9 {
+               hardware ethernet 00:0a:95:bd:e7:f2;
+               fixed-address 192.168.241.13;
+          }
+          host bmac-10 {
+               hardware ethernet 00:0d:93:c0:65:ca;
+               fixed-address 192.168.241.14;
+          }
+          host bmac-11 {
+               hardware ethernet 00:11:24:39:64:be;
+               fixed-address 192.168.241.15;
+          }
+          host bmac-12 {
+               hardware ethernet 00:0d:93:64:ff:7e;
+               fixed-address 192.168.241.16;
+          }
+          host bmac-13 {
+               hardware ethernet 00:11:24:3c:ba:8e;
+               fixed-address 192.168.241.17;
+          }
+          host bmac-14 {
+               hardware ethernet 00:11:24:39:6c:18;
+               fixed-address 192.168.241.18;
+          }
+          host bmac-15 {
+               hardware ethernet 00:11:24:3d:56:80;
+               fixed-address 192.168.241.19;
+          }
+          host bmac-16 {
+               hardware ethernet 00:11:24:3b:ed:20;
+               fixed-address 192.168.241.20;
+          }
+          host bmac-17 {
+               hardware ethernet 00:11:24:3d:e8:06;
+               fixed-address 192.168.241.21;
+          }
+          host bmac-18 {
+               hardware ethernet 00:11:24:38:c3:b0;
+               fixed-address 192.168.241.22;
+          }
+          host bmac-19 {
+               hardware ethernet 00:0a:95:c9:28:38;
+               fixed-address 192.168.241.23;
+          }
+          host bmac-20 {
+               hardware ethernet 00:0a:95:a5:e3:16;
+               fixed-address 192.168.241.24;
+          }
+          host s-keyshadow {
+               hardware ethernet 00:30:65:f1:c2:5a;
+               fixed-address 192.168.241.25;
+          }
+          host sscmac-1 {
+               hardware ethernet 00:0a:95:ba:ae:c2;
+               fixed-address 192.168.241.26;
+          }
+          host smac-1 {
+               hardware ethernet 00:0d:93:29:b3:7e;
+               fixed-address 192.168.241.27;
+          }
+          host smac-8 {
+               hardware ethernet 00:11:24:3c:5e:e8;
+               fixed-address 192.168.241.34;
+          }
+          host smac-9 {
+               hardware ethernet 00:0d:93:c0:72:90;
+               fixed-address 192.168.241.35;
+          }
+          host smac-11 {
+               hardware ethernet 00:11:24:3e:14:8c;
+               fixed-address 192.168.241.37;
+          }
+          host bmac-21 {
+               hardware ethernet 00:0a:95:c4:5d:42;
+               fixed-address 192.168.241.54;
+          }
+          host bmac-22 {
+               hardware ethernet 00:0a:95:cc:3b:24;
+               fixed-address 192.168.241.55;
+          }
+          host bmac-23 {
+               hardware ethernet 00:0a:95:a8:1f:3e;
+               fixed-address 192.168.241.56;
+          }
+          host bscmac-1 {
+               hardware ethernet 00:16:cb:c0:d0:f4;
+               fixed-address 192.168.241.3;
+          }
+          host b-dburrow {
+               hardware ethernet 00:11:24:3b:1e:30;
+               fixed-address 192.168.241.4;
+          }
+          host slpc-12 {
+               hardware ethernet 00:1b:21:16:7b:c0;
+               fixed-address 192.168.241.212;
+          }
+          host slpc-14 {
+               hardware ethernet 00:1b:21:1d:41:cf;
+               fixed-address 192.168.241.214;
+          }
+          host slpc-15 {
+               hardware ethernet 00:1b:21:16:84:e1;
+               fixed-address 192.168.241.215;
+          }
+          host slpc-18 {
+               hardware ethernet 00:1b:21:1b:48:e4;
+               fixed-address 192.168.241.218;
+          }
+          host SLPC-20 {
+               hardware ethernet 00:1b:21:1d:44:3b;
+               fixed-address 192.168.241.220;
+          }
+          host SLPC-21 {
+               hardware ethernet 00:1b:21:1d:4f:28;
+               fixed-address 192.168.241.221;
+          }
+          host SLPC-22 {
+               hardware ethernet 00:1b:21:1d:44:39;
+               fixed-address 192.168.241.222;
+          }
+          host slpc-23 {
+               hardware ethernet 00:1b:21:1b:45:61;
+               fixed-address 192.168.241.223;
+          }
+          host SLPC-16 {
+               hardware ethernet 00:1b:21:1b:46:0d;
+               fixed-address 192.168.241.216;
+          }
+          host SLPC-19 {
+               hardware ethernet 00:1b:21:14:ca:54;
+               fixed-address 192.168.241.219;
+          }
+          host REPL-RH {
+               hardware ethernet 00:02:B3:EB:05:B6;
+               fixed-address 192.168.241.230;
+          }
+          host SLPC-24 {
+               hardware ethernet 00:1b:21:1d:57:b7;
+               fixed-address 192.168.241.224;
+          }
+          host SLPC-17 {
+               hardware ethernet 00:1b:21:1d:58:49;
+               fixed-address 192.168.241.117;
+          }
+          host HCPC-01 {
+               hardware ethernet 00:0E:0C:b7:2F:CB;
+               fixed-address 192.168.241.240;
+          }
+          host HCPC-02 {
+               hardware ethernet 00:0E:0C:B7:2F:34;
+               fixed-address 192.168.241.241;
+          }
+}
+
+### PXE Group 'STAFF-PXE' ###
+group {
+          filename "/tftproot/pxelinux.0";
+          next-server 192.168.15.254;
+
+          ## Static Hosts Assigned to PXE Group ##
+          host ben-tech-4 {
+               hardware ethernet 00:03:93:7d:dc:c8;
+               fixed-address 192.168.16.70;
+          }
+}
+
+#### Static Hosts w/o PXE Group Membership ####
+host taccpc4 {
+     hardware ethernet 00:02:B3:AC:EB:DE;
+     fixed-address 192.168.8.175;
+}
+host weazel {
+     hardware ethernet 00:40:d0:4d:a3:fa;
+     fixed-address 192.168.16.135;
+}
+host GDSC-02 {
+     hardware ethernet 00:0e:0c:b6:16:6c;
+     fixed-address 192.168.8.94;
+}
+host GDSC-04 {
+     hardware ethernet 00:0e:0c:b7:3d:83;
+     fixed-address 192.168.8.96;
+}
+host GDSC-01 {
+     hardware ethernet 00:0e:0c:b6:11:57;
+     fixed-address 192.168.8.93;
+}
+host taccmac5 {
+     hardware ethernet 00:0a:95:e2:52:1e;
+     fixed-address 192.168.8.185;
+}
+host Mark-01 {
+     hardware ethernet 00:0C:6E:BB:28:AE;
+     fixed-address 192.168.16.187;
+}
+host GDRS-1 {
+     hardware ethernet 00:02:B3:DA:9E:9B;
+     fixed-address 192.168.8.17;
+}
+host testbed-6 {
+     hardware ethernet 00:02:B3:EB:08:1D;
+     fixed-address 192.168.16.146;
+}
+host grpc-35 {
+     hardware ethernet 00:1b:21:16:7b:b8;
+     fixed-address 192.168.8.135;
+}
+host rfpc-17 {
+     hardware ethernet 00:1b:21:1d:42:1a;
+     fixed-address 192.168.8.157;
+}
+host test451-2 {
+     hardware ethernet 00:0e:0c:dd:62:b0;
+     fixed-address 192.168.16.138;
+}
+host wakamuffin {
+     hardware ethernet 00:50:fc:c1:67:3a;
+     fixed-address 192.168.25.2;
+}
+host ptech-02 {
+     hardware ethernet 00:0e:0c:cf:87:35;
+     fixed-address 192.168.16.141;
+}
+host Sethlap {
+     hardware ethernet 00:16:cf:21:19:1f;
+     fixed-address 192.168.16.144;
+}
+host PStaff-08 {
+     hardware ethernet 00:0E:0C:CF:80:F5;
+     fixed-address 192.168.16.218;
+}
+host Songo {
+     hardware ethernet 00:02:B3:EB:08:AE;
+     fixed-address 192.168.16.155;
+}
+host Tacc-11 {
+     hardware ethernet 00:08:02:9D:3F:4E;
+     fixed-address 192.168.8.182;
+}
+host PStaff-05 {
+     hardware ethernet 00:1B:21:01:67:DF;
+     fixed-address 192.168.16.215;
+}
+host taccpc1 {
+     hardware ethernet 00:02:b3:ac:ea:cf;
+     fixed-address 192.168.8.174;
+}
+host taccpc2 {
+     hardware ethernet 00:0f:1f:81:de:c8;
+     fixed-address 192.168.8.173;
+}
+host taccmac1 {
+     hardware ethernet 00:0a:95:a7:47:90;
+     fixed-address 192.168.8.172;
+}
+host taccpc3 {
+     hardware ethernet 00:02:b3:ac:e1:2d;
+     fixed-address 192.168.8.171;
+}
+host temp-20 {
+     hardware ethernet 00:02:b3:5f:50:7a;
+     fixed-address 192.168.8.220;
+}
+host RFPC-28 {
+     hardware ethernet 00:1b:21:01:6b:26;
+     fixed-address 192.168.8.168;
+}
+host GRPC-33 {
+     hardware ethernet 00:0e:0c:b7:2e:e4;
+     fixed-address 192.168.8.133;
+}
+host RFPC-20 {
+     hardware ethernet 00:1b:21:1d:43:06;
+     fixed-address 192.168.8.160;
+}
+host MMRS-3 {
+     hardware ethernet 00:02:b3:eb:06:77;
+     fixed-address 192.168.16.248;
+}
+host RFPC-26 {
+     hardware ethernet 00:0e:0c:cf:84:9f;
+     fixed-address 192.168.8.166;
+}
+host RFPC-10 {
+     hardware ethernet 00:0e:0c:b7:30:57;
+     fixed-address 192.168.8.150;
+}
+host RFPC-09 {
+     hardware ethernet 00:0e:0c:b6:0e:42;
+     fixed-address 192.168.8.149;
+}
+host RFPC-08 {
+     hardware ethernet 00:0e:0c:b7:2b:c9;
+     fixed-address 192.168.8.148;
+}
+host RFPC-07 {
+     hardware ethernet 00:0e:0c:b6:16:a1;
+     fixed-address 192.168.8.147;
+}
+host GRPC-32 {
+     hardware ethernet 00:1b:21:1d:57:88;
+     fixed-address 192.168.8.132;
+}
+host GRPC-31 {
+     hardware ethernet 00:0e:0c:b3:03:bc;
+     fixed-address 192.168.8.131;
+}
+host GRPC-13 {
+     hardware ethernet 00:0e:0c:b7:2f:67;
+     fixed-address 192.168.8.113;
+}
+host GRPC-27 {
+     hardware ethernet 00:1b:21:1d:4f:1d;
+     fixed-address 192.168.8.127;
+}
+host GRPC-28 {
+     hardware ethernet 00:02:b3:4c:c6:5f;
+     fixed-address 192.168.8.128;
+}
+host GRPC-26 {
+     hardware ethernet 00:1B:21:01:67:D8;
+     fixed-address 192.168.8.126;
+}
+host GRPC-25 {
+     hardware ethernet 00:0E:0C:CF:7F:10;
+     fixed-address 192.168.8.125;
+}
+host GRPC-24 {
+     hardware ethernet 00:0E:0C:CF:81:1A;
+     fixed-address 192.168.8.124;
+}
+host GRPC-22 {
+     hardware ethernet 00:0e:0c:b6:0f:04;
+     fixed-address 192.168.8.122;
+}
+host GRPC-21 {
+     hardware ethernet 00:0e:0c:b7:3d:84;
+     fixed-address 192.168.8.121;
+}
+host SCPC-02 {
+     hardware ethernet 00:0e:0c:b7:32:19;
+     fixed-address 192.168.8.82;
+}
+host GRPC-19 {
+     hardware ethernet 00:0e:0c:b3:02:db;
+     fixed-address 192.168.8.119;
+}
+host grpc-14 {
+     hardware ethernet 00:1b:21:1b:5b:23;
+     fixed-address 192.168.8.114;
+}
+host grpc-16 {
+     hardware ethernet 00:1b:21:1b:46:08;
+     fixed-address 192.168.8.116;
+}
+host grpc-17 {
+     hardware ethernet 00:1b:21:1d:4e:df;
+     fixed-address 192.168.8.117;
+}
+host grpc-18 {
+     hardware ethernet 00:1b:21:1d:58:f6;
+     fixed-address 192.168.8.118;
+}
+host grpc-15 {
+     hardware ethernet 00:1b:21:1d:43:30;
+     fixed-address 192.168.8.115;
+}
+host GRPC-12 {
+     hardware ethernet 00:1b:21:16:7b:dc;
+     fixed-address 192.168.8.112;
+}
+host GRPC-11 {
+     hardware ethernet 00:0e:0c:b6:16:5f;
+     fixed-address 192.168.8.111;
+}
+host GRPC-10 {
+     hardware ethernet 00:0e:0c:b6:16:5c;
+     fixed-address 192.168.8.110;
+}
+host GRPC-09 {
+     hardware ethernet 00:1b:21:1d:42:f3;
+     fixed-address 192.168.8.109;
+}
+host GRPC-08 {
+     hardware ethernet 00:1b:21:1d:4f:25;
+     fixed-address 192.168.8.108;
+}
+host GRPC-07 {
+     hardware ethernet 00:1b:21:1d:41:fa;
+     fixed-address 192.168.8.107;
+}
+host GRPC-06 {
+     hardware ethernet 00:0e:0c:b6:10:e3;
+     fixed-address 192.168.8.106;
+}
+host GRPC-05 {
+     hardware ethernet 00:1b:21:1d:4f:20;
+     fixed-address 192.168.8.105;
+}
+host GRPC-04 {
+     hardware ethernet 00:0e:0c:b7:2b:15;
+     fixed-address 192.168.8.104;
+}
+host GRPC-03 {
+     hardware ethernet 00:1b:21:1d:4f:1b;
+     fixed-address 192.168.8.103;
+}
+host GRPC-02 {
+     hardware ethernet 00:1b:21:1d:41:d0;
+     fixed-address 192.168.8.102;
+}
+host GRPC-01 {
+     hardware ethernet 00:1b:21:1d:57:89;
+     fixed-address 192.168.8.101;
+}
+host CLPC-02 {
+     hardware ethernet 00:02:b3:eb:06:d9;
+     fixed-address 192.168.8.92;
+}
+host CLPC-01 {
+     hardware ethernet 00:0e:0c:cf:85:68;
+     fixed-address 192.168.8.91;
+}
+host SCPC-01 {
+     hardware ethernet 00:1b:21:16:85:6d;
+     fixed-address 192.168.8.81;
+}
+host HDRS-1 {
+     hardware ethernet 00:02:b3:a3:06:73;
+     fixed-address 192.168.8.18;
+}
+host FAPC-06 {
+     hardware ethernet 00:1B:21:01:67:D5;
+     fixed-address 192.168.8.66;
+}
+host SethWinTest {
+     hardware ethernet 00:0E:0C:cf:80:e9;
+     fixed-address 192.168.16.148;
+}
+host EEPC-05 {
+     hardware ethernet 00:0e:0c:cf:81:16;
+     fixed-address 192.168.8.75;
+}
+host EEPC-04 {
+     hardware ethernet 00:1b:21:01:66:45;
+     fixed-address 192.168.8.74;
+}
+host temptest {
+     hardware ethernet 00:0E:0C:CF:86:02;
+     fixed-address 192.168.16.186;
+}
+host FAPC-05 {
+     hardware ethernet 00:0E:0C:CF:86:97;
+     fixed-address 192.168.8.65;
+}
+host FAPC-04 {
+     hardware ethernet 00:1B:21:01:68:B7;
+     fixed-address 192.168.8.64;
+}
+host FAPC-03 {
+     hardware ethernet 00:0E:0C:CF:81:25;
+     fixed-address 192.168.8.63;
+}
+host FAPC-02 {
+     hardware ethernet 00:0e:0c:b7:3d:8c;
+     fixed-address 192.168.8.62;
+}
+host FAPC-01 {
+     hardware ethernet 00:0e:0c:b7:35:c4;
+     fixed-address 192.168.8.61;
+}
+host WEPC-08 {
+     hardware ethernet 00:0e:0c:cf:7f:0a;
+     fixed-address 192.168.8.58;
+}
+host WEPC-07 {
+     hardware ethernet 00:1b:21:01:66:4a;
+     fixed-address 192.168.8.57;
+}
+host WEPC-06 {
+     hardware ethernet 00:0e:0c:cf:86:12;
+     fixed-address 192.168.8.56;
+}
+host WEPC-05 {
+     hardware ethernet 00:1b:21:01:66:47;
+     fixed-address 192.168.8.55;
+}
+host WEPC-04 {
+     hardware ethernet 00:0e:0c:cf:80:f3;
+     fixed-address 192.168.8.54;
+}
+host WEPC-03 {
+     hardware ethernet 00:0e:0c:cf:86:34;
+     fixed-address 192.168.8.53;
+}
+host WEPC-02 {
+     hardware ethernet 00:0e:0c:cf:81:26;
+     fixed-address 192.168.8.52;
+}
+host WEPC-01 {
+     hardware ethernet 00:0e:0c:cf:86:06;
+     fixed-address 192.168.8.51;
+}
+host rfpc-04 {
+     hardware ethernet 00:0e:0c:b7:2b:b7;
+     fixed-address 192.168.8.144;
+}
+host rfpc-06 {
+     hardware ethernet 00:0e:0c:b3:07:d1;
+     fixed-address 192.168.8.146;
+}
+host RFPC-18 {
+     hardware ethernet 00:1b:21:1d:53:27;
+     fixed-address 192.168.8.158;
+}
+host ptech-05 {
+     hardware ethernet 00:0E:0C:B6:5D:06;
+     fixed-address 192.168.16.171;
+}
+host rfpc-14 {
+     hardware ethernet 00:1b:21:1d:4e:e2;
+     fixed-address 192.168.8.154;
+}
+host HDRS-2 {
+     hardware ethernet 00:02:b3:a2:b6:58;
+     fixed-address 192.168.8.16;
+}
+host rfpc-16 {
+     hardware ethernet 00:1b:21:16:7b:cd;
+     fixed-address 192.168.8.156;
+}
+host GRRS-2 {
+     hardware ethernet 00:02:b3:a3:5c:1a;
+     fixed-address 192.168.8.14;
+}
+host GRRS-1 {
+     hardware ethernet 00:02:b3:ea:fd:32;
+     fixed-address 192.168.8.13;
+}
+host MERS-1 {
+     hardware ethernet 00:02:b3:dc:68:2c;
+     fixed-address 192.168.8.12;
+}
+host SRRS-1 {
+     hardware ethernet 00:02:B3:EB:0C:4E;
+     fixed-address 192.168.8.11;
+}
+host taccpc5 {
+     hardware ethernet 00:03:93:0e:71:56;
+     fixed-address 192.168.8.176;
+}
+host RFPC-24 {
+     hardware ethernet 00:0e:0c:cf:80:f6;
+     fixed-address 192.168.8.164;
+}
+host Pstaff-13 {
+     hardware ethernet 00:0e:0c:cf:86:ad;
+     fixed-address 192.168.16.223;
+}
+host RFPC-27 {
+     hardware ethernet 00:0e:0c:cf:7f:01;
+     fixed-address 192.168.8.167;
+}
+host RFPC-30 {
+     hardware ethernet 00:0e:0c:cf:84:93;
+     fixed-address 192.168.8.170;
+}
+host PStaff-11 {
+     hardware ethernet 00:02:b3:a3:59:a6;
+     fixed-address 192.168.16.221;
+}
+host linux64-b {
+     hardware ethernet 00:02:b3:63:a3:7a;
+     fixed-address 192.168.16.165;
+}
+host GRPC-29 {
+     hardware ethernet 01:67:bb:80:1b:21;
+     fixed-address 192.168.8.129;
+}
+host GRPC-30 {
+     hardware ethernet 00:02:b3:5c:24:c7;
+     fixed-address 192.168.8.130;
+}
+host GRPC-34 {
+     hardware ethernet 00:1b:21:1d:5e:4e;
+     fixed-address 192.168.8.134;
+}
+host Pstaff-12 {
+     hardware ethernet 00:0e:0c:cf:81:19;
+     fixed-address 192.168.16.222;
+}
+host GRPC-20 {
+     hardware ethernet 00:0e:0c:b6:5c:eb;
+     fixed-address 192.168.8.120;
+}
+host taccmac2 {
+     hardware ethernet 00:0d:93:48:15:10;
+     fixed-address 192.168.8.177;
+}
+host taccmac3 {
+     hardware ethernet 00:0d:93:9c:9f:7c;
+     fixed-address 192.168.8.178;
+}
+host taccmac4 {
+     hardware ethernet 00:03:93:0e:6d:5c;
+     fixed-address 192.168.8.179;
+}
+host taccmac9 {
+     hardware ethernet 00:0a:27:94:38:8a;
+     fixed-address 192.168.8.180;
+}
+host taccmac10 {
+     hardware ethernet 00:0a:27:8c:d2:b0;
+     fixed-address 192.168.8.181;
+}
+host GDSC-03 {
+     hardware ethernet 00:0e:0c:b7:28:a6;
+     fixed-address 192.168.8.95;
+}
+host PStaff-02 {
+     hardware ethernet 00:1b:21:01:68:b1;
+     fixed-address 192.168.16.212;
+}
+host rfpc-13 {
+     hardware ethernet 00:1b:21:1d:41:cc;
+     fixed-address 192.168.8.153;
+}
+host ceci {
+     hardware ethernet 00:02:B3:EB:0C:D4;
+     fixed-address 192.168.16.156;
+}
+host MMCTR-1 {
+     hardware ethernet 00:21:85:11:11:48;
+     fixed-address 192.168.16.241;
+}
+host PStaff-09 {
+     hardware ethernet 00:0E:0C:B6:0E:43;
+     fixed-address 192.168.16.219;
+}
+host PStaff-01 {
+     hardware ethernet 00:0e:0c:cf:7f:0d;
+     fixed-address 192.168.16.211;
+}
+host mmctr-3 {
+     hardware ethernet 00:0e:0c:b7:32:2d;
+     fixed-address 192.168.16.243;
+}
+host ptech-04 {
+     hardware ethernet 00:0E:0C:CF:85:66;
+     fixed-address 192.168.16.161;
+}
+host PStaff-07 {
+     hardware ethernet 00:0E:0C:B6:11:A7;
+     fixed-address 192.168.16.217;
+}
+host l_jwheelwright {
+     hardware ethernet 00:0a:95:91:a3:06;
+     fixed-address 192.168.12.231;
+}
+host PSTAFF-15 {
+     hardware ethernet 00:02:b3:48:47:54;
+     fixed-address 192.168.16.225;
+}
+host danhome {
+     hardware ethernet 00:02:b3:a2:9d:f0;
+     fixed-address 192.168.16.143;
+}
+host Rover {
+     hardware ethernet 00:02:b3:d7:31:39;
+     fixed-address 192.168.16.185;
+}
+host jg-testbed {
+     hardware ethernet 00:02:b3:ea:8a:f1;
+     fixed-address 192.168.16.167;
+}
+host PStaff-04 {
+     hardware ethernet 00:0E:0C:CF:81:23;
+     fixed-address 192.168.16.214;
+}
+host MMRS-2 {
+     hardware ethernet 00:02:b3:eb:08:b1;
+     fixed-address 192.168.16.246;
+}
+host MMRS-1 {
+     hardware ethernet 00:02:b3:eb:07:c1;
+     fixed-address 192.168.16.247;
+}
+host taccpc6 {
+     hardware ethernet 00:02:B3:3E:DA:F4;
+     fixed-address 192.168.8.183;
+}
+host taccpc7 {
+     hardware ethernet 00:02:B3:1B:C4:2F;
+     fixed-address 192.168.8.184;
+}
+host REPL-03 {
+     hardware ethernet 00:02:b3:a3:06:e7;
+     fixed-address 192.168.16.190;
+}
+host test-consult {
+     hardware ethernet 00:02:b3:7c:11:07;
+     fixed-address 192.168.16.189;
+}
+host ptech-01 {
+     hardware ethernet 00:02:b3:9e:08:e2;
+     fixed-address 192.168.16.132;
+}
+host ptech-01XP {
+     hardware ethernet 00:90:27:62:ce:08;
+     fixed-address 192.168.16.131;
+}
+host pstaff-16 {
+     hardware ethernet 00:0e:0c:cf:87:5b;
+     fixed-address 192.168.16.226;
+}
+host STest2 {
+     hardware ethernet 00:0E:0C:B7:2F:00;
+     fixed-address 192.168.16.149;
+}
+host newsprint {
+     hardware ethernet 00:02:B3:AC:E1:31;
+     fixed-address 192.168.16.250;
+}
+host RFPC-29 {
+     hardware ethernet 00:0e:0c:cf:86:7e;
+     fixed-address 192.168.8.169;
+}
+host RFPC-01 {
+     hardware ethernet 00:0e:0c:b7:2b:be;
+     fixed-address 192.168.8.141;
+}
+host RFPC-25 {
+     hardware ethernet 00:0e:0c:cf:86:8a;
+     fixed-address 192.168.8.165;
+}
+host RFPC-21 {
+     hardware ethernet 00:0e:0c:cf:80:e6;
+     fixed-address 192.168.8.161;
+}
+host rfpc-12 {
+     hardware ethernet 00:1b:21:1d:43:08;
+     fixed-address 192.168.8.152;
+}
+host rfpc-15 {
+     hardware ethernet 00:1b:21:1d:41:fc;
+     fixed-address 192.168.8.155;
+}
+host RFPC-23 {
+     hardware ethernet 00:1b:21:01:69:5e;
+     fixed-address 192.168.8.163;
+}
+host MMVE-01 {
+     hardware ethernet 00:0E:0C:CF:7E:FB;
+     fixed-address 192.168.15.84;
+}
+host RFPC-03 {
+     hardware ethernet 00:0e:0c:b7:2e:f1;
+     fixed-address 192.168.8.143;
+}
+host RFPC-05 {
+     hardware ethernet 00:0e:0c:b6:11:a8;
+     fixed-address 192.168.8.145;
+}
+host RFPC-11 {
+     hardware ethernet 00:1b:21:1d:43:03;
+     fixed-address 192.168.8.151;
+}
+host RFPC-02 {
+     hardware ethernet 00:0e:0c:b6:11:56;
+     fixed-address 192.168.8.142;
+}
+host FARS-1 {
+     hardware ethernet 00:02:b3:a2:9d:d0;
+     fixed-address 192.168.8.15;
+}
+host Test451-3 {
+     hardware ethernet 00:1b:21:1b:e4:bf;
+     fixed-address 192.168.16.139;
+}
+host test451-1 {
+     hardware ethernet 00:0e:0c:cf:84:cf;
+     fixed-address 192.168.16.137;
+}
+host ada-test {
+     hardware ethernet 00:0e:0c:b7:32:da;
+     fixed-address 192.168.16.39;
+}
+host MMCTR-2 {
+     hardware ethernet 00:0E:0C:CF:86:04;
+     fixed-address 192.168.16.242;
+}
+host linux32-image {
+     hardware ethernet 00:02:b3:a2:bd:cf;
+     fixed-address 192.168.16.164;
+}
+host rfpc-19 {
+     hardware ethernet 00:1b:21:16:85:1f;
+     fixed-address 192.168.8.159;
+}
+host PStaff-06 {
+     hardware ethernet 00:0E:0C:CF:7E:F9;
+     fixed-address 192.168.16.216;
+}
+host l4emac-1 {
+     hardware ethernet 00:11:24:3e:13:ea;
+     fixed-address 192.168.8.190;
+}
+host l2fmac-1 {
+     hardware ethernet 00:11:24:38:ce:d0;
+     fixed-address 192.168.8.191;
+}
+host l2fmac-2 {
+     hardware ethernet 00:11:24:3a:f9:d2;
+     fixed-address 192.168.8.192;
+}
+host l3cmac-1 {
+     hardware ethernet 00:0a:95:85:6c:36;
+     fixed-address 192.168.8.193;
+}
+host l2gmac-7 {
+     hardware ethernet 00:11:24:38:e9:fc;
+     fixed-address 192.168.8.194;
+}
+host l2gmac-8 {
+     hardware ethernet 00:11:24:3b:c0:7c;
+     fixed-address 192.168.8.195;
+}
+host l2gmac-9 {
+     hardware ethernet 00:11:24:3c:b3:00;
+     fixed-address 192.168.8.196;
+}
+host l2gmac-10 {
+     hardware ethernet 00:11:24:3a:81:74;
+     fixed-address 192.168.8.197;
+}
+host l2gmac-11 {
+     hardware ethernet 00:11:24:3c:dd:7c;
+     fixed-address 192.168.8.198;
+}
+host l2gmac-12 {
+     hardware ethernet 00:11:24:3d:2a:10;
+     fixed-address 192.168.8.199;
+}
+host tmac-1 {
+     hardware ethernet 00:0d:93:7b:02:84;
+     fixed-address 192.168.8.200;
+}
+host tmac-2 {
+     hardware ethernet 00:03:93:52:c8:a2;
+     fixed-address 192.168.8.201;
+}
+host l1smac-3 {
+     hardware ethernet 00:11:24:3e:15:30;
+     fixed-address 192.168.8.202;
+}
+host l1smac-4 {
+     hardware ethernet 00:11:24:3e:13:26;
+     fixed-address 192.168.8.203;
+}
+host l4smac-5 {
+     hardware ethernet 00:11:24:3a:f0:0e;
+     fixed-address 192.168.8.204;
+}
+host l4smac-6 {
+     hardware ethernet 00:11:24:3a:8f:f6;
+     fixed-address 192.168.8.205;
+}
+host l1lmac-1 {
+     hardware ethernet 00:0a:95:a1:b0:d2;
+     fixed-address 192.168.8.206;
+}
+host l1rmac-1 {
+     hardware ethernet 00:0a:95:6f:92:54;
+     fixed-address 192.168.8.207;
+}
+host l1rmac-2 {
+     hardware ethernet 00:0a:95:85:6e:b0;
+     fixed-address 192.168.8.208;
+}
+host l1rmac-3 {
+     hardware ethernet 00:0a:95:85:6b:54;
+     fixed-address 192.168.8.209;
+}
+host l1rmac-4 {
+     hardware ethernet 00:0a:95:93:63:e8;
+     fixed-address 192.168.8.210;
+}
+host l1rmac-5 {
+     hardware ethernet 00:0a:95:6f:91:70;
+     fixed-address 192.168.8.211;
+}
+host l1dmac-2 {
+     hardware ethernet 00:11:24:3a:fa:0e;
+     fixed-address 192.168.8.213;
+}
+host l3imac-1 {
+     hardware ethernet 00:0a:95:88:f2:62;
+     fixed-address 192.168.8.214;
+}
+host l1emac-1 {
+     hardware ethernet 00:0a:95:7d:eb:46;
+     fixed-address 192.168.8.215;
+}
+host l1emac-2 {
+     hardware ethernet 00:0a:95:93:63:ac;
+     fixed-address 192.168.8.216;
+}
+host l2emac-1 {
+     hardware ethernet 00:0a:95:a1:af:e8;
+     fixed-address 192.168.8.217;
+}
+host l2emac-2 {
+     hardware ethernet 00:0a:95:6f:4f:a6;
+     fixed-address 192.168.8.218;
+}
+host l1bmac-1 {
+     hardware ethernet 00:0a:95:97:c9:32;
+     fixed-address 192.168.8.219;
+}
+host l1bmac-3 {
+     hardware ethernet 00:0a:95:85:6b:50;
+     fixed-address 192.168.8.221;
+}
+host l1bmac-4 {
+     hardware ethernet 00:0a:95:93:64:16;
+     fixed-address 192.168.8.222;
+}
+host l1bmac-5 {
+     hardware ethernet 00:0a:95:7d:f1:1c;
+     fixed-address 192.168.8.223;
+}
+host l1bmac-6 {
+     hardware ethernet 00:0a:95:7d:f1:d8;
+     fixed-address 192.168.8.224;
+}
+host l2bmac-1 {
+     hardware ethernet 00:0a:95:7d:eb:06;
+     fixed-address 192.168.8.227;
+}
+host l2bmac-2 {
+     hardware ethernet 00:0a:95:d7:2f:34;
+     fixed-address 192.168.8.228;
+}
+host l2bmac-4 {
+     hardware ethernet 00:0a:95:8f:08:da;
+     fixed-address 192.168.8.230;
+}
+host l2bmac-5 {
+     hardware ethernet 00:0a:95:7d:ed:a4;
+     fixed-address 192.168.8.231;
+}
+host l2bmac-6 {
+     hardware ethernet 00:0a:95:7d:ee:b2;
+     fixed-address 192.168.8.232;
+}
+host l2bmac-7 {
+     hardware ethernet 00:0a:95:93:62:c8;
+     fixed-address 192.168.8.233;
+}
+host l2bmac-8 {
+     hardware ethernet 00:0a:95:7d:ed:b6;
+     fixed-address 192.168.8.234;
+}
+host l3emac-1 {
+     hardware ethernet 00:0a:95:85:6c:42;
+     fixed-address 192.168.8.235;
+}
+host l3emac-2 {
+     hardware ethernet 00:0a:95:93:65:20;
+     fixed-address 192.168.8.236;
+}
+host l3gmac-6 {
+     hardware ethernet 00:0a:95:a1:b0:8e;
+     fixed-address 192.168.8.242;
+}
+host l4emac-2 {
+     hardware ethernet 00:11:24:3b:be:a0;
+     fixed-address 192.168.8.243;
+}
+host l4emac-3 {
+     hardware ethernet 00:11:24:3b:1f:10;
+     fixed-address 192.168.8.244;
+}
+host l4emac-4 {
+     hardware ethernet 00:0a:95:85:6b:c6;
+     fixed-address 192.168.8.245;
+}
+host l4smac-1 {
+     hardware ethernet 00:11:24:3a:f0:d0;
+     fixed-address 192.168.8.247;
+}
+host l5mmac-1 {
+     hardware ethernet 00:0a:95:93:5b:d4;
+     fixed-address 192.168.8.249;
+}
+host l5mmac-2 {
+     hardware ethernet 00:11:24:3a:f4:fe;
+     fixed-address 192.168.8.250;
+}
+host l5mmac-3 {
+     hardware ethernet 00:11:24:3b:ff:1e;
+     fixed-address 192.168.8.251;
+}
+host l1dmac-4 {
+     hardware ethernet 00:11:24:3d:53:e8;
+     fixed-address 192.168.8.252;
+}
+host l1dmac-5 {
+     hardware ethernet 00:11:24:38:ca:04;
+     fixed-address 192.168.8.253;
+}
+host buscmac-1 {
+     hardware ethernet 00:16:cb:c0:c9:69;
+     fixed-address 192.168.173.21;
+}
+host buiemac-1 {
+     hardware ethernet 00:0a:95:8f:02:3e;
+     fixed-address 192.168.173.22;
+}
+host bu-keyshadow {
+     hardware ethernet 00:30:65:f1:ba:f8;
+     fixed-address 192.168.173.23;
+}
+host bumac-1 {
+     hardware ethernet 00:16:cb:92:10:97;
+     fixed-address 192.168.173.26;
+}
+host bumac-2 {
+     hardware ethernet 00:16:cb:95:fd:46;
+     fixed-address 192.168.173.27;
+}
+host bumac-3 {
+     hardware ethernet 00:16:cb:86:9c:ea;
+     fixed-address 192.168.173.28;
+}
+host bumac-4 {
+     hardware ethernet 00:16:cb:95:f2:86;
+     fixed-address 192.168.173.29;
+}
+host bumac-5 {
+     hardware ethernet 00:16:cb:c0:a4:59;
+     fixed-address 192.168.173.30;
+}
+host bumac-6 {
+     hardware ethernet 00:16:cb:c0:e3:71;
+     fixed-address 192.168.173.41;
+}
+host bumac-7 {
+     hardware ethernet 00:16:cb:c0:e0:83;
+     fixed-address 192.168.173.42;
+}
+host bumac-8 {
+     hardware ethernet 00:16:cb:95:fd:26;
+     fixed-address 192.168.173.43;
+}
+host bumac-9 {
+     hardware ethernet 00:16:cb:92:19:e3;
+     fixed-address 192.168.173.44;
+}
+host bumac-10 {
+     hardware ethernet 00:16:cb:c0:c8:8c;
+     fixed-address 192.168.173.45;
+}
+host bumac-11 {
+     hardware ethernet 00:16:cb:c0:ef:4c;
+     fixed-address 192.168.173.46;
+}
+host bumac-12 {
+     hardware ethernet 00:16:cb:85:a3:ce;
+     fixed-address 192.168.173.47;
+}
+host bumac-13 {
+     hardware ethernet 00:16:cb:96:6d:11;
+     fixed-address 192.168.173.48;
+}
+host bumac-14 {
+     hardware ethernet 00:16:cb:83:42:f0;
+     fixed-address 192.168.173.49;
+}
+host bumac-15 {
+     hardware ethernet 00:16:cb:c0:ef:5a;
+     fixed-address 192.168.173.50;
+}
+host bumac-16 {
+     hardware ethernet 00:16:cb:87:42:f8;
+     fixed-address 192.168.173.51;
+}
+host bumac-17 {
+     hardware ethernet 00:16:cb:c0:c9:81;
+     fixed-address 192.168.173.52;
+}
+host bumac-18 {
+     hardware ethernet 00:16:cb:92:1a:35;
+     fixed-address 192.168.173.53;
+}
+host bumac-19 {
+     hardware ethernet 00:16:cb:c0:d2:f7;
+     fixed-address 192.168.173.54;
+}
+host bumac-20 {
+     hardware ethernet 00:0a:95:86:ae:ea;
+     fixed-address 192.168.173.55;
+}
+host bumac-21 {
+     hardware ethernet 00:0a:95:91:31:c2;
+     fixed-address 192.168.173.56;
+}
+host bumac-22 {
+     hardware ethernet 00:0a:95:91:31:50;
+     fixed-address 192.168.173.57;
+}
+host bumac-23 {
+     hardware ethernet 00:0a:95:91:31:c0;
+     fixed-address 192.168.173.58;
+}
+host bumac-24 {
+     hardware ethernet 00:0a:95:86:a0:66;
+     fixed-address 192.168.173.59;
+}
+host bumac-25 {
+     hardware ethernet 00:11:24:3e:13:94;
+     fixed-address 192.168.173.60;
+}
+host bumac-26 {
+     hardware ethernet 00:11:24:3b:76:08;
+     fixed-address 192.168.173.61;
+}
+host bumac-27 {
+     hardware ethernet 00:0a:95:86:a3:a6;
+     fixed-address 192.168.173.62;
+}
+host u2mac-1 {
+     hardware ethernet 00:0d:93:7b:05:50;
+     fixed-address 192.168.211.201;
+}
+host u2mac-2 {
+     hardware ethernet 00:11:24:3d:2b:fc;
+     fixed-address 192.168.211.202;
+}
+host u2mac-3 {
+     hardware ethernet 00:11:24:3d:5a:e8;
+     fixed-address 192.168.211.203;
+}
+host u2mac-4 {
+     hardware ethernet 00:11:24:3b:c0:34;
+     fixed-address 192.168.211.204;
+}
+host u2mac-5 {
+     hardware ethernet 00:11:24:3a:8f:14;
+     fixed-address 192.168.211.205;
+}
+host t-tech-9 {
+     hardware ethernet 00:0a:95:8e:10:20;
+     fixed-address 192.168.12.207;
+}
+host l_amarie {
+     hardware ethernet 00:0a:95:a1:b1:16;
+     fixed-address 192.168.12.233;
+}
+host l_cownby_mac {
+     hardware ethernet 00:0a:95:8e:08:f6;
+     fixed-address 192.168.12.208;
+}
+host l_dlarson {
+     hardware ethernet 00:0a:95:93:65:6e;
+     fixed-address 192.168.12.249;
+}
+host l_dsutera {
+     hardware ethernet 00:0d:93:74:47:32;
+     fixed-address 192.168.12.215;
+}
+host l_mnoe {
+     hardware ethernet 00:03:93:d3:01:76;
+     fixed-address 192.168.12.232;
+}
+host l_rhanson {
+     hardware ethernet 00:11:24:de:c6:32;
+     fixed-address 192.168.12.242;
+}
+host lmac-226 {
+     hardware ethernet 00:0a:95:93:62:de;
+     fixed-address 192.168.12.226;
+}
+host mfcmac-2 {
+     hardware ethernet 00:16:cb:87:b6:a3;
+     fixed-address 192.168.12.209;
+}
+host mlimac-2 {
+     hardware ethernet 00:0a:95:93:64:88;
+     fixed-address 192.168.12.244;
+}
+host mlimac-3 {
+     hardware ethernet 00:0a:95:85:6a:96;
+     fixed-address 192.168.12.245;
+}
+host mlimac-4 {
+     hardware ethernet 00:0a:95:7d:ef:50;
+     fixed-address 192.168.12.246;
+}
+host rare_books1 {
+     hardware ethernet 00:0a:95:85:6a:4c;
+     fixed-address 192.168.12.240;
+}
+host rare_books2 {
+     hardware ethernet 00:11:24:3c:6b:80;
+     fixed-address 192.168.12.241;
+}
+host scitexmac {
+     hardware ethernet 00:03:93:63:50:e4;
+     fixed-address 192.168.12.238;
+}
+host scitexmac2 {
+     hardware ethernet 00:03:93:52:b6:a4;
+     fixed-address 192.168.12.239;
+}
+host mscmac-1 {
+     hardware ethernet 00:16:cb:85:43:fc;
+     fixed-address 192.168.16.2;
+}
+host mscmac-2 {
+     hardware ethernet 00:16:cb:c0:e0:8e;
+     fixed-address 192.168.16.3;
+}
+host mscmac-3 {
+     hardware ethernet 00:16:cb:92:19:c2;
+     fixed-address 192.168.16.4;
+}
+host mscmac-4 {
+     hardware ethernet 00:16:cb:92:15:09;
+     fixed-address 192.168.16.5;
+}
+host m-supervisor {
+     hardware ethernet 00:16:cb:90:ff:45;
+     fixed-address 192.168.16.7;
+}
+host m-cjhanson {
+     hardware ethernet 00:0d:93:6c:f7:e6;
+     fixed-address 192.168.16.8;
+}
+host m-bmcbride {
+     hardware ethernet 00:0a:95:cc:3c:6e;
+     fixed-address 192.168.16.10;
+}
+host m-rsondrup {
+     hardware ethernet 00:11:24:38:ed:e6;
+     fixed-address 192.168.16.11;
+}
+host m-jclayton {
+     hardware ethernet 00:0a:95:c9:29:ba;
+     fixed-address 192.168.16.12;
+}
+host m-mirsik {
+     hardware ethernet 00:0a:95:d7:cd:12;
+     fixed-address 192.168.16.14;
+}
+host m-jwalston {
+     hardware ethernet 00:16:cb:85:a6:12;
+     fixed-address 192.168.16.16;
+}
+host m-dlords {
+     hardware ethernet 00:03:93:7d:dc:ec;
+     fixed-address 192.168.16.17;
+}
+host m-amowdood {
+     hardware ethernet 00:11:24:3b:e7:5e;
+     fixed-address 192.168.16.20;
+}
+host m-kpeterson {
+     hardware ethernet 00:0a:95:d9:87:5e;
+     fixed-address 192.168.16.21;
+}
+host m-pres-2 {
+     hardware ethernet 00:03:93:48:0f:76;
+     fixed-address 192.168.16.28;
+}
+host m-media-rip-1 {
+     hardware ethernet 00:0a:95:98:b8:76;
+     fixed-address 192.168.16.30;
+}
+host m-pres-4 {
+     hardware ethernet 00:03:93:48:0d:a0;
+     fixed-address 192.168.16.33;
+}
+host ddonaldson {
+     hardware ethernet 00:0a:95:af:99:8a;
+     fixed-address 192.168.16.41;
+}
+host rnakamura {
+     hardware ethernet 00:0a:95:d7:9b:b4;
+     fixed-address 192.168.16.44;
+}
+host bmartin {
+     hardware ethernet 00:0a:95:c3:73:a6;
+     fixed-address 192.168.16.45;
+}
+host tsams {
+     hardware ethernet 00:0a:95:d2:98:4e;
+     fixed-address 192.168.16.46;
+}
+host ric-tech-1 {
+     hardware ethernet 00:0a:95:b0:65:1e;
+     fixed-address 192.168.16.47;
+}
+host ric-tech-2 {
+     hardware ethernet 00:0a:95:8f:4a:d6;
+     fixed-address 192.168.16.48;
+}
+host ric-tech-5 {
+     hardware ethernet 00:03:93:6f:b0:8e;
+     fixed-address 192.168.16.51;
+}
+host ric-tech-6 {
+     hardware ethernet 00:03:93:9e:de:96;
+     fixed-address 192.168.16.52;
+}
+host ric-tech-7 {
+     hardware ethernet 00:0a:95:b7:9d:ec;
+     fixed-address 192.168.16.53;
+}
+host ric-tech-8 {
+     hardware ethernet 00:0a:95:be:31:52;
+     fixed-address 192.168.16.54;
+}
+host ric-tech-10 {
+     hardware ethernet 00:16:cb:c0:85:f0;
+     fixed-address 192.168.16.56;
+}
+host leopard {
+     hardware ethernet 00:0a:95:c3:73:c2;
+     fixed-address 192.168.16.57;
+}
+host jam-tech-4 {
+     hardware ethernet 00:03:93:7d:dc:de;
+     fixed-address 192.168.16.60;
+}
+host jam-tech-5 {
+     hardware ethernet 00:03:93:7d:dc:8e;
+     fixed-address 192.168.16.61;
+}
+host jam-tech-6 {
+     hardware ethernet 00:16:cb:84:76:35;
+     fixed-address 192.168.16.62;
+}
+host intel_base {
+     hardware ethernet 00:16:cb:a3:85:a3;
+     fixed-address 192.168.16.63;
+}
+host ben-tech-1 {
+     hardware ethernet 00:03:93:6f:3f:5c;
+     fixed-address 192.168.16.193;
+}
+host ben-tech-2 {
+     hardware ethernet 00:0a:95:9f:43:8e;
+     fixed-address 192.168.16.68;
+}
+host ben-tech-3 {
+     hardware ethernet 00:03:93:9e:dd:a8;
+     fixed-address 192.168.16.69;
+}
+host ben-tech-5 {
+     hardware ethernet 00:0d:93:c0:72:56;
+     fixed-address 192.168.16.71;
+}
+host ben-tech-6 {
+     hardware ethernet 00:0d:93:29:bb:f8;
+     fixed-address 192.168.16.72;
+}
+host ben-tech-7 {
+     hardware ethernet 00:16:cb:c0:64:29;
+     fixed-address 192.168.16.73;
+}
+host reb-tech-1 {
+     hardware ethernet 00:16:cb:86:d1:c0;
+     fixed-address 192.168.16.75;
+}
+host reb-tech-5 {
+     hardware ethernet 00:0a:95:cc:44:32;
+     fixed-address 192.168.16.79;
+}
+host reb-tech-6 {
+     hardware ethernet 00:0a:95:bb:43:d6;
+     fixed-address 192.168.16.80;
+}
+host m-ired-mac-1 {
+     hardware ethernet 00:03:93:6f:b0:7c;
+     fixed-address 192.168.16.83;
+}
+host m-ired-mac-2 {
+     hardware ethernet 00:03:93:48:0e:3c;
+     fixed-address 192.168.16.84;
+}
+host m-ired-mac-3 {
+     hardware ethernet 00:03:93:52:a3:7c;
+     fixed-address 192.168.16.85;
+}
+host m-ired-mac-4 {
+     hardware ethernet 00:03:93:52:a1:fa;
+     fixed-address 192.168.16.86;
+}
+host m-qt-bcast-1 {
+     hardware ethernet 00:03:93:ca:cf:ca;
+     fixed-address 192.168.16.90;
+}
+host m-qt-bcast-2 {
+     hardware ethernet 00:0a:95:78:cc:4a;
+     fixed-address 192.168.16.91;
+}
+host m-qt-bcast-3 {
+     hardware ethernet 00:0a:95:78:cf:42;
+     fixed-address 192.168.16.92;
+}
+host m-qt-bcast-4 {
+     hardware ethernet 00:0a:95:79:5e:50;
+     fixed-address 192.168.16.93;
+}
+host m-qt-bcast-5 {
+     hardware ethernet 00:0a:95:90:41:2c;
+     fixed-address 192.168.16.94;
+}
+host m-qt-bcast-6 {
+     hardware ethernet 00:03:93:bb:8c:56;
+     fixed-address 192.168.16.95;
+}
+host m-qt-bcast-7 {
+     hardware ethernet 00:03:93:52:ac:0c;
+     fixed-address 192.168.16.96;
+}
+host m-qt-bcast-8 {
+     hardware ethernet 00:03:93:7d:f6:3a;
+     fixed-address 192.168.16.97;
+}
+host m-qt-bcast-9 {
+     hardware ethernet 00:03:93:6f:b0:80;
+     fixed-address 192.168.16.98;
+}
+host m-qt-bcast-10 {
+     hardware ethernet 00:03:93:7d:fe:d6;
+     fixed-address 192.168.16.99;
+}
+host m-qt-bcast-11 {
+     hardware ethernet 00:03:93:7d:dd:24;
+     fixed-address 192.168.16.100;
+}
+host m-qt-bcast-12 {
+     hardware ethernet 00:03:93:7d:f6:7c;
+     fixed-address 192.168.16.101;
+}
+host m-qt-bcast-13 {
+     hardware ethernet 00:03:93:7d:f6:5a;
+     fixed-address 192.168.16.102;
+}
+host m-qt-bcast-14 {
+     hardware ethernet 00:03:93:7d:ff:4c;
+     fixed-address 192.168.16.103;
+}
+host m-qt-bcast-15 {
+     hardware ethernet 00:03:93:6f:b0:9a;
+     fixed-address 192.168.16.104;
+}
+host m-qt-bcast-16 {
+     hardware ethernet 00:03:93:7d:dd:10;
+     fixed-address 192.168.16.105;
+}
+host m-qt-bcast-17 {
+     hardware ethernet 00:03:93:7d:dd:0a;
+     fixed-address 192.168.16.106;
+}
+host dav-tech-1 {
+     hardware ethernet 00:0d:93:29:b9:44;
+     fixed-address 192.168.16.108;
+}
+host dav-tech-2 {
+     hardware ethernet 00:0d:93:6c:fc:ec;
+     fixed-address 192.168.16.109;
+}
+host dav-tech-3 {
+     hardware ethernet 00:03:93:7d:dc:fa;
+     fixed-address 192.168.16.110;
+}
+host dav-tech-4 {
+     hardware ethernet 00:03:93:7e:05:04;
+     fixed-address 192.168.16.111;
+}
+host dav-tech-5 {
+     hardware ethernet 00:0a:95:a1:b0:b4;
+     fixed-address 192.168.16.112;
+}
+host ton-tech-1 {
+     hardware ethernet 00:0a:95:d2:a6:9e;
+     fixed-address 192.168.16.117;
+}
+host ton-tech-2 {
+     hardware ethernet 00:03:93:9e:dd:a4;
+     fixed-address 192.168.16.118;
+}
+host ton-tech-3 {
+     hardware ethernet 00:03:93:6f:3f:4c;
+     fixed-address 192.168.16.119;
+}
+host ton-tech-4 {
+     hardware ethernet 00:0a:95:cb:1d:e8;
+     fixed-address 192.168.16.120;
+}
+host ton-tech-5 {
+     hardware ethernet 00:03:93:7d:dc:f2;
+     fixed-address 192.168.16.121;
+}
+host ton-tech-6 {
+     hardware ethernet 00:03:93:52:a1:02;
+     fixed-address 192.168.16.122;
+}
+host dav-tech-6 {
+     hardware ethernet 00:16:cb:92:12:7b;
+     fixed-address 192.168.16.113;
+}
+host macs_pm_g4 {
+     hardware ethernet 00:03:93:7d:f6:4e;
+     fixed-address 192.168.16.59;
+}
+host reb-tech-mac-2 {
+     hardware ethernet 00:03:93:7d:f6:5e;
+     fixed-address 192.168.16.76;
+}
+host ric-tech-mac-3 {
+     hardware ethernet 00:03:93:6f:b0:68;
+     fixed-address 192.168.16.77;
+}
+host ric-tech-mac-4 {
+     hardware ethernet 00:03:93:6f:3c:3a;
+     fixed-address 192.168.16.78;
+}
+host ric-tech-mac-7 {
+     hardware ethernet 00:03:93:9e:dd:8e;
+     fixed-address 192.168.16.81;
+}
+host reb-tech-mac-8 {
+     hardware ethernet 00:03:93:7d:fe:d0;
+     fixed-address 192.168.16.82;
+}
+host MMRS-4 {
+     hardware ethernet 00:02:B3:eb:05:ab;
+     fixed-address 192.168.16.249;
+}
+host filemaker {
+     hardware ethernet 00:0D:93:9D:7F:DB;
+     fixed-address 192.168.17.149;
+}
+host marratech {
+     hardware ethernet 00:0D:93:9E:7B:46;
+     fixed-address 192.168.17.144;
+}
+host rm_master {
+     hardware ethernet 00:0D:93:9D:7E:D3;
+     fixed-address 192.168.17.135;
+}
+host rm_shadow {
+     hardware ethernet 00:0D:93:9E:9A:5B;
+     fixed-address 192.168.17.136;
+}
+host intermapper {
+     hardware ethernet 00:03:93:7D:F6:AE;
+     fixed-address 192.168.17.139;
+}
+host keyserver {
+     hardware ethernet 00:03:93:7E:04:F6;
+     fixed-address 192.168.17.146;
+}
+host mactech {
+     hardware ethernet 00:0D:93:9E:7C:0E;
+     fixed-address 192.168.17.140;
+}
+host qtss {
+     hardware ethernet 00:0D:93:9C:7D:32;
+     fixed-address 192.168.17.141;
+}
+host staff_server {
+     hardware ethernet 00:0D:93:9E:7C:24;
+     fixed-address 192.168.17.143;
+}
+host scl_web {
+     hardware ethernet 00:0D:93:9E:7C:12;
+     fixed-address 192.168.17.145;
+}
+host ric-tech-4 {
+     hardware ethernet 00:03:93:7d:dc:a8;
+     fixed-address 192.168.16.50;
+}
+host rfpc-22 {
+     hardware ethernet 00:0e:0c:cf:7e:fe;
+     fixed-address 192.168.8.162;
+}
+host grpc-36 {
+     hardware ethernet 00:1b:21:1d:57:9a;
+     fixed-address 192.168.8.136;
+}
+host sWinTest {
+     hardware ethernet 00:0E:0C:cf:88:b1;
+     fixed-address 192.168.16.142;
+}
+host weazel2 {
+     hardware ethernet 00:17:42:eb:af:2e;
+     fixed-address 192.168.16.136;
+}
+host ric-tech-3 {
+     hardware ethernet 00:00:00:00:00:00;
+     fixed-address 192.168.16.49;
+}

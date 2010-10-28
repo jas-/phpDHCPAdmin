@@ -1,0 +1,20 @@
+Some portions of this application have been
+developed by others, a respective breakdown
+of components and owners:
+
+lightbox javascript:
+Lokesh Dhakar & Geoff Stearns
+
+calendar javascript:
+Mihai Bazon
+
+InputFilter class:
+Gianpaolo Racca, Ghislain Picard,
+Marco Wandschneider, Chris Tobin,
+Andrew Eddie and Daniel Morris
+
+dbSessions class:
+Stefan Gabos
+
+Everything else:
+Jason Gerfen

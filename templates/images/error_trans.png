@@ -1,0 +1,69 @@
+<?php
+
+/*
+ * phpMyOrdering - All rights reserved.
+ *
+ * Author:       Jason Gerfen
+ * Email:        <jason.gerfen@gmail.com>
+ *
+ * Description:  config.inc.php - Global defined options
+ *
+ */
+
+$defined['hostname'] = "orders.scl.utah.edu";// Server hostname or URL
+$defined['dbhost']   = "localhost";          // Database hostname
+$defined['username'] = "phpMyOrdering";      // Database username
+$defined['password'] = "d3v3l0pm3n+";        // Database password
+$defined['dbname']   = "phpMyOrdering";      // Name of database
+$defined['mail']     = "pc@scl.utah.edu";    // Administrator email
+$defined['support']  = "pc@scl.utah.edu";    // Support email
+$defined['redirect'] = "$_SERVER[PHP_SELF]?id=main&skin=red"; // Redirect URL
+$defined['virpath']  = "/home/jason/orders/dev/"; // Virtual path to phpMyOrdering
+$defined['templates']= "images/templates";   // templates directory
+$defined['timeout']  = "1800";               // timeout in seconds
+$defined['logfile']  = "leases";             // location of the system log file
+$defined['tmpDir']   = "scripts/tmp/";       // Temporary folder for file uploads
+$defined['error']    = "images/error.jpg";
+$defined['debug']    = "TRUE";
+
+// Error codes
+$errors['db_config']  = "Database configuration error, please contact administrator.";
+$errors['db_conn']    = "Database connection error, please check configuration.";
+$errors['db_select']  = "Database selection error, please check configuration.";
+$errors['val_missing']= "Missing data, please try again...";
+$errors['val_str']    = "Invalid string detected, allowable types are [a-z].";
+$errors['val_ipaddr'] = "Invalid IPv4 address detected, allowable types are [0-255].[0-255].[0-255].[0-255].";
+$errors['val_xss']    = "Invalid data found, detected possible XSS attack... Administrator notified.";
+$errors['val_url']    = "Invalid data found, must be a valid FQDN, possible XSS attack... Administrator notified.";
+$errors['val_sql']    = "Invalid data found, detected possible SQL injection attack... Administrator notified.";
+$errors['val_bfr']    = "Invalid data found, detected possible Buffer Overflow detected, Administrator notified.";
+$errors['val_alp']    = "Invalid alphanumeric data found, allowable character sets are [a-z] and [0-9].";
+$errors['val_num']    = "Invalid number data found, allowable characters are [0-9].";
+$errors['val_mny']    = "Invalid monetary amount detected, allowable format is [0-9]{0,40}.[0-9]{0,2}";
+$errors['val_par']    = "Invalid paragraph format detected, only UTF-8 and alpha numeric characters allowed.";
+$errors['auth_n']     = "Invalid user, the credentials you entered was not found in the database.";
+$errors['auth_to']    = "Timed out. Your session has been timed out due to inactivity.";
+
+// list of includes
+require 'auth.inc.php';
+require 'errors.inc.php';
+require 'skin.inc.php';
+require 'strings.inc.php';
+require 'levels.inc.php';
+require 'groups.inc.php';
+
+// need some debugging?
+function DebugFunc()
+{
+ echo "<pre>GET Variables<br>";
+ print_r( $_GET );
+ echo "</pre><hr><pre>POST Variables<br>";
+ print_r( $_POST );
+ echo "</pre><hr><pre>SESSION Variables<br>";
+ print_r( $_SESSION );
+ echo "</pre><hr><pre>COOKIE Variables<br>";
+ print_r( $_COOKIE );
+ echo "</pre>";
+}
+
+?>

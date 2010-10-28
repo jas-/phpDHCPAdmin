@@ -1,0 +1,1876 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+<TITLE>phpDHCPAdmin Help</TITLE>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<META name="author" content="Jason Gerfen [jason.gerfen@gmail.com]">
+<META name="robots" content="index,nofollow">
+<style type="text/css">
+<!--
+body {
+ margin : 5;
+ font-size : 10px;
+ color : #000000;
+ font : 12px Arial, Helvetica, sans-serif;
+ background : #ffffff;
+}
+a {
+ color : #000000;
+ font : 11px Arial, Helvetica, sans-serif;
+	font-weight: bold;
+}
+a:hover {
+ color : #cc0000;
+ font : 11px Arial, Helvetica, sans-serif;
+	font-weight: bold;
+}
+-->
+</style>
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
+ <tr> 
+  <td width="90%"><b>phpDHCPAdmin</b><BR>Help system for the phpDHCPAdmin application</td> 
+  <td width="10%" valign="middle" nowrap>&nbsp;</td> 
+ </tr> 
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+ <tr> 
+  <td>&nbsp;<b>Welcome to the DHCP Administrative Console Help System.</b></td>
+ </tr>
+ <tr> 
+  <td>Before making any changes to the current DHCP configuration please review this document to understand how the DHCP service works and how this application allows you to easily make changes the the configuration.</td>
+ </tr>
+ <tr> 
+  <td><hr></td>
+ </tr>
+ <tr> 
+  <td><a href="help.html#index"><b>Help System Index</b></a></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;<a href="help.html#what"><b>&bull; DHCP Primer</b></a></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#how"><b>&bull; How does it work?</b></a></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#setup"><b>&bull; How to set up</b></a></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#config"><b>&bull; How to configure</b></a></td>
+ </tr>
+	<tr>
+		<td><hr></td>
+	</tr>
+ <tr> 
+  <td><a href="help.html#console"><b>phpDHCPAdmin Application Help</b></a></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;<a href="help.html#overview"><b>&bull; Overview</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;<a href="help.html#app_setup"><b>&bull; Setup</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#files"><b>&bull; File Structure</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#db"><b>&bull; Database Structure</b></a></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;<a href="help.html#use"><b>&bull; How to use</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#auth"><b>&bull; Authentication</b></a></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#global"><b>&bull; Global settings</b></a></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#vlans"><b>&bull; Managing Subnets</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#vlans_add"><b>&bull; Adding Subnets</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#vlans_edit"><b>&bull; Editing Subnets</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#vlans_del"><b>&bull; Deleting Subnets</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#pxe"><b>&bull; Managing PXE Groups</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#pxe_add"><b>&bull; Adding PXE Groups</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#pxe_edit"><b>&bull; Editing PXE Groups</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#pxe_del"><b>&bull; Deleting PXE Groups</b></a></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#hosts"><b>&bull; Managing Statically assigned Hosts</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#search_hosts"><b>&bull; Searching For Hosts</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#add_hosts"><b>&bull; Adding Static Hosts</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#del_hosts"><b>&bull; Deleting Static Hosts</b></a></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#update"><b>&bull; Update DHCP settings</b></a></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#utils"><b>&bull; Administrative Utilities</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#import"><b>&bull; Importing Static Hosts</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#backup"><b>&bull; Restoring Backup DHCPD.CONF</b></a></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#prefs"><b>&bull; User Preferences</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#users"><b>&bull; Managing users</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#add_users"><b>&bull; Adding Users</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#edit_users"><b>&bull; Editing Users</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#del_users"><b>&bull; Deleting Users</b></a></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#logs"><b>&bull; Managing access logs</b></a></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#support"><b>&bull; Obtaining support</b></a></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#bugs"><b>&bull; Bug Reporting</b></a></td>
+ </tr>
+	<tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="help.html#admin"><b>&bull; Emailing phpDHCPAdmin Support</b></a></td>
+ </tr>
+	<tr> 
+  <td><a href="help.html#references"><b>&bull; DHCPD References</b></a></td>
+ </tr>
+ <tr> 
+  <td><hr></td>
+ </tr>
+ <tr> 
+  <td><a name="what"><b>What is DHCP?</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The <strong>Dynamic Host Configuration Protocol</strong> (DHCP) provides a framework for passing configuration information to hosts on a <strong>TCP/IP</strong> network. <strong>DHCP</strong> is based on the <strong>Bootstrap Protocol</strong> (BOOTP) [7], adding the capability of automatic allocation of reusable network addresses and additional configuration options [19]. <strong>DHCP</strong> captures the behavior of <strong>BOOTP</strong> relay agents [7, 23], and <strong>DHCP</strong> participants can interoperate with <strong>BOOTP</strong> participants [9].</td>
+ </tr>
+ <tr> 
+  <td><a name="how"><b> - How does it work?</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>DHCP</strong> supports three mechanisms for <strong>IP address allocation</strong>. In <strong>"automatic allocation", DHCP</strong> assigns a <strong>permanent IP address</strong> to a host. In <strong>"dynamic allocation", DHCP</strong> assigns an <strong>IP address to a host for a limited period of time</strong> (or until the host explicitly relinquishes the address). In <strong>"manual allocation"</strong>, a host's <strong>IP address</strong> is assigned by the <strong>network administrator</strong>, and <strong>DHCP</strong> is used simply to convey the assigned address to the host. A particular network will use one or more of these mechanisms, depending on the policies of the network administrator.</td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Dynamic allocation</strong> is the only <strong>one</strong> of the<strong> three mechanisms</strong> that allows automatic reuse of an address that is no longer needed by the host to which it was assigned. Thus, <strong>dynamic allocation</strong> is particularly useful for assigning an address to a <strong>host</strong> that will be connected to the network only temporarily or for sharing a limited pool of <strong>IP addresses</strong> among a group of <strong>hosts</strong> that do not need permanent <strong>IP addresses</strong>. <strong>Dynamic allocation</strong> may also be a good choice for assigning an <strong>IP address</strong> to a new host being permanently connected to a network where <strong>IP addresses</strong> are sufficiently scarce that it is important to reclaim them when old hosts are retired. <strong>Manual allocation</strong> allows <strong>DHCP</strong> to be used to eliminate the error-prone process of manually configuring hosts with <strong>IP addresses</strong> in environments where (for whatever reasons) it is desirable to manage <strong>IP address assignment</strong> outside of the <strong>DHCP</strong> mechanisms.</td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The format of <strong>DHCP</strong> messages is based on the format of <strong>BOOTP</strong> messages, to capture the <strong>BOOTP</strong> relay agent behavior described as part of the <strong>BOOTP</strong> specification [7, 23] and to allow interoperability of existing <strong>BOOTP</strong> clients with <strong>DHCP servers</strong>. Using <strong>BOOTP relaying agents</strong> eliminates the necessity of having a <strong>DHCP server</strong> on each <strong>physical network segment</strong>.</td>
+ </tr>
+ <tr> 
+  <td><a href="ftp://ftp.isi.edu/in-notes/rfc2131.txt" target="_blank">ftp://ftp.isi.edu/in-notes/rfc2131.txt</a></td>
+ </tr>
+ <tr> 
+  <td><a name="setup"><b> - How to setup?</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>DHCP server for UNIX</strong> There are several <strong>DHCP servers</strong> available for U*X-like OSes, both commercial and free. One of the more popular free <strong>DHCP servers</strong> is Paul <strong>Vixie/ISC DHCPd</strong>. Currently the latest version is 2.0 (suggested for most users) but 3.0 is in beta testing. You can get them from <a href="ftp://ftp.isc.org/isc/dhcp/" target="_blank">ftp://ftp.isc.org/isc/dhcp/</a> Some of the distributions provide binary packages for dhcpd so skip the following section if you got it installed that way.</td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;After you download unpack it, Change into the distribution directory and<br>type: <strong>./configure</strong><br>It will take some time to configure the settings.<br>After it is done<br>type: <strong>make</strong> and then<br>type:<strong>make install</strong>.</td>
+ </tr>
+ <tr> 
+  <td><a name="config"><b> - How to configure?</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+ </tr>
+ <tr> 
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When done with installation type <strong>ifconfig -a</strong>. You should see something like this:</td>
+ </tr>
+ <tr> 
+  <td bgcolor="#CCCCCC"><pre>
+   eth0   Link encap:10Mbps 
+   Ethernet HWaddr 00:C0:4F:D3:C4:62
+   inet addr:183.217.19.43 Bcast:183.217.19.255 Mask:255.255.255.0
+   UP BROADCAST RUNNING MULTICAST MTU:1500 Metric:1
+   RX packets:2875542 errors:0 dropped:0 overruns:0
+   TX packets:218647 errors:0 dropped:0 overruns:0
+   Interrupt:11 Base address:0x210</pre></td>
+ </tr>
+ <tr> 
+  <td>If it doesn't say <strong>MULTICAST</strong> you should reconfigure your kernel and add <strong>multicast support</strong>. On most systems you will not need to do this. p>Next step is to add route for 255.255.255.255. Quoted rom <strong>DHCPd</strong> README:</p><p> &quot;In order for <strong>dhcpd</strong> to work correctly with picky <strong>DHCP clients</strong> (e.g., Windows 95), it must be able to send packets with an <strong>IP destination address</strong> of 255.255.255.255. Unfortunately, <strong>Linux</strong> insists on changing 255.255.255.255 into the local subnet broadcast address (here, that's 192.5.5.223). This results in a <strong>DHCP protocol</strong> violation, and while many <strong>DHCP clients</strong> don't notice the problem, some (e.g., all <strong>Microsoft DHCP clients</strong>) do. <strong>Clients</strong> that have this problem will appear not to see <strong>DHCPOFFER</strong> messages from the server.&quot;</p><p>Type: <strong>route add -host 255.255.255.255 dev eth0</strong></p><p>If you get a message <strong>&quot;255.255.255.255: Unknown host&quot;</strong>, you should try adding the following entry to your <strong>/etc/hosts</strong> file:</p></td>
+ </tr>
+ <tr> 
+  <td bgcolor="#CCCCCC">255.255.255.255 all-ones</td>
+ </tr>
+ <tr> 
+  <td>&nbsp;Then, try:</td>
+ </tr>
+ <tr> 
+  <td bgcolor="#CCCCCC">route add -host all-ones dev eth0</td>
+ </tr>
+ <tr> 
+  <td>or</td>
+ </tr>
+ <tr> 
+  <td bgcolor="#CCCCCC">route add 255.255.255.0 dev eth0</td>
+ </tr>
+ <tr> 
+  <td>eth0 is of course the name of the network device you are using. If it differs change appropriately.</td>
+ </tr>
+ <tr> 
+  <td>Now you need to <strong>configure DHCPd</strong>. In order to do this you will have to create or edit <strong>/etc/dhcpd.conf</strong>. There is a graphical interface for <strong>dhcpd configuration</strong> under <strong>KDE</strong> ( <a href="http://www.kde.org/" target="_blank">http://www.kde.org/</a> ) called <strong>kcmdhcpd</strong> that is very similar to the <strong>DHCP configurator</strong> on <strong>Windows NT</strong>. When <strong>KDE 2.0</strong> comes out it should come with http://www.kde.org/.</td>
+ </tr>
+ <tr> 
+  <td>If you want to <strong>configure</strong> it by hand follow instructions below. <br>Most commonly what you want to do is assign <strong>IP addresses</strong> randomly. This can be done with <strong>settings</strong> as follows:</td>
+ </tr>
+ <tr> 
+  <td bgcolor="#CCCCCC">Sample /etc/dhcpd.conf<br>
+                      <pre>
+                      default-lease-time 600;
+                      max-lease-time 7200;
+                      option subnet-mask 255.255.255.0;
+                      option broadcast-address 192.168.1.255;
+                      option routers 192.168.1.254;
+                      option domain-name-servers 192.168.1.1, 192.168.1.2;
+                      option domain-name &quot;mydomain.org&quot;; 
+                      subnet 192.168.1.0 netmask 255.255.255.0 {
+                        range 192.168.1.10 192.168.1.100;
+                        range 192.168.1.150 192.168.1.200;
+                      }</pre></td>
+ </tr>
+                  <tr> 
+                    <td>This will result in <strong>DHCP server</strong> giving 
+                      a <strong>client</strong> an <strong>IP address</strong> 
+                      from the <strong>range 192.168.1.10-192.168.1.100</strong> 
+                      or <strong>192.168.1.150-192.168.1.200</strong>. It will 
+                      <strong>lease</strong> an <strong>IP address</strong> for 
+                      <strong>600 seconds</strong> if the <strong>client</strong> 
+                      doesn't ask for specific time frame. Otherwise the maximum 
+                      (allowed) <strong>lease</strong> will be <strong>7200 seconds</strong>. 
+                      The <strong>server</strong> will also &quot;advise&quot; 
+                      the client that it should use <strong>255.255.255.0</strong> 
+                      as its <strong>subnet mask, 192.168.1.255</strong> as its 
+                      <strong>broadcast address, 192.168.1.254</strong> as the 
+                      r<strong>outer/gateway and 192.168.1.1</strong> and <strong>192.168.1.2</strong> 
+                      as its <strong>DNS servers</strong>. 
+                      <p>If you need to specify a <strong>WINS server</strong> 
+                        for your <strong>Windows clients</strong> you will need 
+                        to include the <strong>netbios-name-servers</strong> option 
+                        e.g.</p></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td bgcolor="#CCCCCC">option netbios-name-servers 192.168.1.1;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>You can also assign <strong>specific IP addresses</strong> 
+                      based on <strong>clients ethernet address</strong> e.g.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td bgcolor="#CCCCCC">host haagen {<br>
+                      hardware ethernet 08:00:2b:4c:59:23;<br>
+                      fixed-address 192.168.1.222;<br>
+                      }</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>This will assign <strong>IP address 192.168.1.222</strong> 
+                      to a <strong>client</strong> with <strong>ethernet address 
+                      08:00:2b:4c:59:23</strong>. 
+                      <p>You can also mix and match e.g. you can have certain 
+                        <strong>clients</strong> getting <strong>&quot;static&quot; 
+                        IP addresses (e.g. servers)</strong> and others being 
+                        <strong>alloted dynamic IPs (e.g. mobile users with laptops)</strong>. 
+                        There are a number of other options e.g. <strong>nis server 
+                        addresses, time server addresses etc</strong>., if you 
+                        need any of those options please read the <strong>dhcpd.conf 
+                        man page</strong>.</p></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>There is only one thing to do <strong>before starting 
+                      the server</strong>. In most cases <strong>DHCP installation</strong> 
+                      doesn't create a <strong>dhcpd.leases</strong> files. This 
+                      file is used by <strong>DHCPd</strong> to store information 
+                      about <strong>current leases</strong>. It is in the plain 
+                      text form so you can view it during the operation of <strong>DHCPd</strong>. 
+                      To <strong>create dhcpd.leases</strong> type</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td bgcolor="#CCCCCC">touch /var/state/dhcp/dhcpd.leases</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>This will <strong>create</strong> an empty <strong>file 
+                      (file size = 0)</strong>. Some of the <strong>older version</strong> 
+                      of <strong>dhcpd 2.0</strong> placed the file in <strong>/etc/dhcpd.leases</strong>. 
+                      You <strong>do not need</strong> to make any changes to 
+                      the <strong>leases file</strong> it will be manipulated 
+                      by the <strong>dhcpd</strong>. If you get a message saying 
+                      that file exists simply ignore it and go to the next step. 
+                      <p>You can now invoke the <strong>DHCP server</strong>. 
+                        Simply type (or include in the bootup scripts)</p></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td bgcolor="#CCCCCC">/usr/sbin/dhcpd</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>This will invoke <strong>dhcpd</strong> on <strong>eth0 
+                      device</strong>. If you want to invoke it on another <strong>device</strong> 
+                      simply supply it on the <strong>command line</strong> e.g.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td bgcolor="#CCCCCC">/usr/sbin/dhcpd eth1</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>To verify that everything is <strong>working</strong> 
+                      fine you should first turn on the <strong>debugging mode</strong> 
+                      and put the <strong>server</strong> in foreground. You can 
+                      do this by typing</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td bgcolor="#CCCCCC">/usr/sbin/dhcpd -d -f</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>Then <strong>boot</strong> up <strong>one</strong> of 
+                      your <strong>clients</strong> and check out the <strong>console</strong> 
+                      of your <strong>server</strong>. You will see a number of 
+                      <strong>debugging messages</strong> come up. <strong>If 
+                      everything works out fine you are done :-)</strong>. Quit 
+                      <strong>dhcpd</strong> and <strong>start it without the 
+                      -d -f and arguments</strong>. If you want <strong>dhcpd</strong> 
+                      to <strong>start at boot-up include dhcpd</strong> in e.g.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td bgcolor="#CCCCCC">/etc/rc.d/rc.local</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><a name="console"><b>DHCP Administrative Console</b></a> 
+                      <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The <strong>DHCP Administration 
+                      console</strong> was developed to allow easy access to <strong>modifying</strong> 
+                      and <strong>managing</strong> various <strong>options</strong> 
+                      for the <strong>DHCP services</strong> for the <strong>ISC DHCPD application</strong>.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><a name="overview"><b> - Overview</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Currenty <strong>DHCP services</strong> 
+                      in a <strong>Linux environment</strong> require semi-advanced 
+                      modifications to the <strong>dhcpd.conf file</strong> for <strong>DHCP 
+                      services</strong>. This tool was designed to allow easy 
+                      access to modification of <strong>Global settings</strong>, 
+                      <strong>managing</strong> (adding, editing or deleting) 
+                      individual <strong>subnets</strong> on <strong>network</strong> . By employing various login group levels, 
+                      limitations have been set to make the <strong>management</strong> 
+                      of various <strong>static</strong> or <strong>dynamic DHCP 
+                      leases</strong> near impossible to mis-type or <strong>configure</strong>.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><strong>&nbsp;Some key features are listed below:</strong></td>
+                  </tr>
+                  <tr> 
+                    <td><strong>-</strong> Cross-site scripting checks<br> <strong>-</strong> 
+                      Session spoofing checks<br> <strong>-</strong> Missing session 
+                      data checks<br> <strong>-</strong> Missing form data checks<br> 
+                      <strong>-</strong> Invalid form data checks<br> <strong>-</strong> 
+                      Remote computer information<br> <strong>-</strong> Logging 
+                      of valid vs. in-valid access<br> <strong>-</strong> User 
+                      level access<br> <strong>-</strong> User administration<br> 
+                      <strong>-</strong> Log filtering for valid vs. in-valid 
+                      logon attempts<br> <strong>-</strong> Quick update of Global 
+                      settings<br> <strong>-</strong> Quick updates of Global 
+                      Subnet configuration<br> <strong>-</strong> Quick searching 
+                      of hosts in various subnets<br> <strong>-</strong> Easy 
+                      to use help system for quick reference<br> <strong>-</strong> 
+                      Application support options<br> <strong>-</strong> SSL Support<br> 
+                      <strong>-</strong> MAC / IP Address formating checks<br> 
+                      <strong>-</strong> Duplicate host checks<br></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><a name="app_setup"><b> - How to setup</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In order to <strong>setup the phpDHCPAdmin application</strong> you will need to <strong>download it</strong> from <a href="http://phpdhcpadmin.enj0i.com" target="_blank">phpDHCPAdmin Download</a>. Once you have <strong>downloaded the Gzip'd archive</strong> use the following <strong>shell commands to extract in the desired web folder</strong>.<br>
+                   <pre>%> gzip -dfrv phpDHCPAdmin.tar.gz<br>%> tar -xvf phpDHCPAdmin.tar</pre>Once you have <strong>extracted the gzip'd archive</strong> to the <strong>web folder you wish to use</strong> you will need to <strong>configure the application</strong> by <strong>editing the <em>/web_folder/scripts/functions.inc.php</em> file</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><a name="files"><b> - File Structure</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The <strong>phpDHCPAdmin file structure is as follows</strong>:
+																				    <ol>
+																								 <li><em><strong>/</strong></em> - Root web folder for the phpDHCPAdmin application</li>
+																									<ol>
+																									 <li><em><strong>help</strong></em> - Folder containing this file and images/screenshots</li>
+																										<li><em><strong>images</strong></em> - Contains template images</li>
+																										<li><em><strong>scripts</strong></em> - Contains backend processing scripts</li>
+																									</ol>
+																									<li><em><strong>index.php</strong></em> - Web template</li>
+																									<li><em><strong>logs.php</strong></em> - Logs viewer</li>
+																			</ol></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><a name="db"><b> - Database Structure</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Below is a the <strong>current database configuration information</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td><pre>
+<b>Configs Table</b>
++-------+-------------+------+-----+---------+----------------+
+| Field | Type        | Null | Key | Default | Extra          |
++-------+-------------+------+-----+---------+----------------+
+| id    | int(255)    |      | PRI | NULL    | auto_increment |
+| date  | varchar(25) |      |     |         |                |
+| data  | longtext    |      |     |         |                |
++-------+-------------+------+-----+---------+----------------+
+
+<b>Global Table</b>
++--------+--------------+------+-----+---------+----------------+
+| Field  | Type         | Null | Key | Default | Extra          |
++--------+--------------+------+-----+---------+----------------+
+| id     | int(11)      |      | PRI | NULL    | auto_increment |
+| dn     | varchar(100) |      |     |         |                |
+| lt     | int(6)       |      |     | 0       |                |
+| mlt    | int(6)       |      |     | 0       |                |
+| msc01  | varchar(100) |      |     |         |                |
+| msc02  | varchar(100) |      |     |         |                |
+| msc03  | varchar(100) |      |     |         |                |
+| msc04  | varchar(100) |      |     |         |                |
+| msc05  | varchar(100) |      |     |         |                |
+| pxe01  | varchar(100) |      |     |         |                |
+| pxe02  | varchar(100) |      |     |         |                |
+| pxe03  | varchar(100) |      |     |         |                |
+| pxe04  | varchar(100) |      |     |         |                |
+| pxe05  | varchar(100) |      |     |         |                |
+| pxe06  | varchar(100) |      |     |         |                |
+| pxeOpt | varchar(100) |      |     |         |                |
++--------+--------------+------+-----+---------+----------------+
+
+ <strong>Hosts Table </strong>
++----------+--------------+------+-----+---------+----------------+
+| Field    | Type         | Null | Key | Default | Extra          |
++----------+--------------+------+-----+---------+----------------+
+| id       | int(11)      |      | PRI | NULL    | auto_increment |
+| hostname | varchar(100) |      | UNI |         |                |
+| mac      | varchar(100) |      | UNI |         |                |
+| ip       | varchar(100) |      | UNI |         |                |
+| vlan     | varchar(100) |      |     |         |                |
+| group    | varchar(255) |      |     |         |                |
++----------+--------------+------+-----+---------+----------------+
+
+<strong>Logs Table</strong>
++-----------+--------------+------+-----+---------+----------------+
+| Field     | Type         | Null | Key | Default | Extra          |
++-----------+--------------+------+-----+---------+----------------+
+| id        | int(255)     |      | PRI | NULL    | auto_increment |
+| date      | varchar(255) |      | MUL |         |                |
+| time      | varchar(255) |      |     |         |                |
+| ip        | varchar(255) |      |     |         |                |
+| port      | int(255)     |      |     | 0       |                |
+| username  | varchar(255) |      |     |         |                |
+| password  | varchar(255) |      |     |         |                |
+| page      | longtext     |      |     |         |                |
+| pagecount | varchar(255) |      |     |         |                |
+| message   | longtext     |      |     |         |                |
+| session   | varchar(255) |      |     |         |                |
++-----------+--------------+------+-----+---------+----------------+
+
+<strong>PXE Table</strong>
++--------------+--------------+------+-----+---------+----------------+
+| Field        | Type         | Null | Key | Default | Extra          |
++--------------+--------------+------+-----+---------+----------------+
+| id           | int(255)     |      | PRI | NULL    | auto_increment |
+| pxe_name     | varchar(30)  |      | UNI |         |                |
+| pxe_server   | varchar(45)  |      |     |         |                |
+| pxe_filename | varchar(255) |      |     |         |                |
++--------------+--------------+------+-----+---------+----------------+
+
+<strong>Subnets Table</strong>
++-----------+--------------+------+-----+---------+----------------+
+| Field     | Type         | Null | Key | Default | Extra          |
++-----------+--------------+------+-----+---------+----------------+
+| id        | int(11)      |      | PRI | NULL    | auto_increment |
+| sub       | varchar(100) |      | UNI |         |                |
+| msk       | varchar(100) |      |     |         |                |
+| dns01     | varchar(100) |      |     |         |                |
+| dns02     | varchar(100) |      |     |         |                |
+| rtrs      | varchar(100) |      |     |         |                |
+| vlans     | varchar(255) |      | UNI |         |                |
+| use_scope | char(3)      |      |     |         |                |
+| rnge1     | varchar(100) |      |     |         |                |
+| rnge2     | varchar(100) |      |     |         |                |
++-----------+--------------+------+-----+---------+----------------+
+
+<strong>Users Table</strong>
++-------------+--------------+------+-----+---------+----------------+
+| Field       | Type         | Null | Key | Default | Extra          |
++-------------+--------------+------+-----+---------+----------------+
+| id          | int(255)     |      | MUL | NULL    | auto_increment |
+| username    | varchar(255) | YES  | MUL | NULL    |                |
+| password    | varchar(255) | YES  |     | NULL    |                |
+| level       | varchar(8)   | YES  |     | 0       |                |
+| dept        | varchar(40)  | YES  |     | 0       |                |
+| first       | varchar(255) | YES  |     | NULL    |                |
+| last        | varchar(255) | YES  |     | NULL    |                |
+| saddy       | varchar(255) | YES  |     | NULL    |                |
+| city        | varchar(255) | YES  |     | NULL    |                |
+| state       | varchar(255) | YES  |     | NULL    |                |
+| zip         | int(10)      | YES  |     | 0       |                |
+| phone       | varchar(12)  | YES  |     | 0       |                |
+| email       | varchar(255) | YES  |     | NULL    |                |
+| details     | varchar(255) | YES  |     | NULL    |                |
+| ip          | varchar(255) | YES  |     | NULL    |                |
+| host        | varchar(255) | YES  |     | NULL    |                |
+| create_date | varchar(255) | YES  |     | NULL    |                |
+| create_time | varchar(255) | YES  |     | NULL    |                |
+| access_date | varchar(255) | YES  |     | NULL    |                |
+| access_time | varchar(255) | YES  |     | NULL    |                |
+| session     | varchar(255) | YES  |     | NULL    |                |
++-------------+--------------+------+-----+---------+----------------+</pre>
+                  </tr>
+                  <tr> 
+                    <td><a name="use"><b> - How to use?</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To begin using the <strong>DHCP 
+                      Administrative console</strong> simply access the <strong>URL</strong> 
+                      where the <strong>application</strong> has been installed 
+                      <strong>eg. http://www.domain.com/dhcp/index.php</strong>.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><a name="auth"><b> - Authentication</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You will need to of been 
+                      provided with <strong>logon credentials</strong> BEFORE 
+                      <strong>logging in</strong>, contact your <strong>DHCP administrator</strong> 
+                      for that information. Below is a small screenshot of the 
+                      <strong>login screen</strong>.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><img src="001.gif" width="675" height="227"></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Once you have successfully 
+                      logged into the <strong>DHCP Adminsistrative application</strong> 
+                      you will see a <strong>screen</strong> that looks like the 
+                      one below. Your <strong>navigational menu</strong> is located 
+                      on the left hand side of the <strong>screen</strong>. This 
+                      area provides you with several bits of information concerning 
+                      your <strong>local computer information</strong>, <strong>host 
+                      information</strong> and <strong>session ID information</strong>, 
+                      as well as a link to this <strong>help document</strong> 
+                      which appears in <strong>each area</strong> of the <strong>application</strong> 
+                      to assist you with <strong>configuring</strong> the various 
+                      <strong>options</strong> for your <strong>DHCP service</strong>.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>**</strong> Please 
+                      note that your <strong>login screen</strong> may vary depending 
+                      on the <strong>user group</strong> you were assigned to, 
+                      all <strong>options</strong> from the <strong>navigataion 
+                      menu</strong> MAY NOT be available to you.<strong>**</strong></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><img src="002.gif" width="675" height="442"></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                   <td><table width="100%"  border="0" cellspacing="5">
+ <tr valign="top">
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Below is screen shot of the <b>Administrative Menu System</b><br>
+                     <img src="037.gif" width="125" height="415"><br></td>
+  <td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Below is a screen shot of the <b>User Level Menu System</b><br>
+                     <img src="038.gif" width="125" height="245"></td>
+ </tr>
+</table></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><a name="global"><b> - Global settings</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Here we have the <strong>Global 
+                      DHCP settings</strong>. This area allows you to modify <strong>settings</strong> 
+                      for the <strong>service</strong> which will be <strong>universal</strong> 
+                      or <strong>global</strong> to the <strong>Utah.edu network 
+                      infastructure</strong>. In order to modify this area you 
+                      will need to have <strong>"Admin" level access</strong> 
+                      to the <strong>DHCP Administrative Console application</strong>.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><table BGCOLOR ="#ffffff" WIDTH ="100%" BORDER ="0" CELLPADDING ="8">
+                        <tr> 
+                          <td><font FACE ="Arial,Helvetica,sans-serif"><i><strong>Global 
+                            DHCP settings table</strong></i></font><br> <br> <table width="100%" BORDER ="1" ALIGN ="LEFT" CELLPADDING ="4" style="copyright">
+                              <tr> 
+                                <td valign="top"><b>Parameter</b></td>
+                                <td valign="top"><b>Description</b></td>
+                                <td valign="top"><b>Datatype</b></td>
+                                <td valign="top"><strong>Example Usage</strong></td>
+                              </tr>
+                              <tr> 
+                                <td valign="top"> <strong>default-lease-time</strong></td>
+                                <td valign="top"> Default length in seconds that 
+                                  the lease is valid</td>
+                                <td valign="top"> Numeric</td>
+                                <td valign="top">default-lease-time 900;</td>
+                              </tr>
+                              <tr> 
+                                <td valign="top"> <strong>domain-name</strong></td>
+                                <td valign="top"> The name of the domain for the 
+                                  specified subnet</td>
+                                <td valign="top"> Text </td>
+                                <td valign="top">option domain-name=&quot;Utah.edu&quot;;</td>
+                              </tr>
+                              <tr> 
+                                <td valign="top"> <strong>max-lease-time</strong></td>
+                                <td valign="top"> Maximum time in seconds the 
+                                  server will grant a lease should the client 
+                                  request a specific lease time</td>
+                                <td valign="top"> Numeric</td>
+                                <td valign="top">max-lease-time 1800;</td>
+                              </tr>
+                            </table></td>
+                        </tr>
+																								<tr> 
+                          <td><font FACE ="Arial,Helvetica,sans-serif"><i><strong>Optional settings for the DHCPD Service</strong></i></font><br> 
+                            <br> <table width="100%" BORDER ="1" ALIGN ="LEFT" CELLPADDING ="4" style="copyright">
+                              <tr> 
+                                <td valign="top"><b>Parameter</b></td>
+                                <td valign="top"><b>Description</b></td>
+                                <td valign="top"><strong>Options</strong></td>
+                              </tr>
+                              <tr> 
+                                <td valign="top"> <strong>ddns-update-syle</strong></td>
+                                <td valign="top"> Defines method of updating name server information for clients </td>
+                                <td valign="top">interim, ad-hoc, none </td>
+                              </tr>
+                              <tr> 
+                                <td valign="top"> <strong>domain-name-servers</strong></td>
+                                <td valign="top"> Comma deliminited list of name servers available </td>
+                                <td valign="top">option domain-name-servers ns1.example.com, ns2.example.com </td>
+                              </tr>
+                              <tr> 
+                                <td valign="top"> <strong>subnet-mask</strong></td>
+                                <td valign="top"> Global definition of subnet for dynamic hosts (use on non-multihomed machines as default for all clients) </td>
+                                <td valign="top">option subnet-mask 255.255.255.0 </td>
+                              </tr>
+																														<tr> 
+                                <td valign="top"> <strong>broadcast-address</strong></td>
+                                <td valign="top"> Global definition of broadcast address to be passed to clients </td>
+                                <td valign="top">option broadcast-address 192.168.0.255 </td>
+                              </tr>
+																														<tr> 
+                                <td valign="top"> <strong>routers</strong></td>
+                                <td valign="top"> Pass the gateway parameter to the requesting clients </td>
+                                <td valign="top">option routers 192.168.0.1 </td>
+                              </tr>
+																														<tr> 
+                                <td valign="top"> <strong>get-lease-hostnames</strong></td>
+                                <td valign="top"> Enables DHCPD to perform lookup of /etc/hosts or DNS to get hostname belonging to specific IP address and passes it to the client </td>
+                                <td valign="top">option get-lease-hostnames true </td>
+                              </tr>
+																														<tr> 
+                                <td valign="top"> <strong>next-server</strong></td>
+                                <td valign="top"> Tells client what machine is serving TFTP (only necessary for ISC DHCPD daemons older then .30.2) </td>
+                                <td valign="top">option get-lease-hostnames true </td>
+                              </tr>
+																														<tr> 
+                                <td valign="top"> <strong>root-path</strong></td>
+                                <td valign="top"> Passes IP address and directory to mount to connecting clients </td>
+                                <td valign="top">option root-path &quot;192.168.0.254:/opt/ltsp/&quot; </td>
+                              </tr>
+																									</table></td>
+                        </tr>
+                      </table></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;As you can see from the screen shot below you have the ability to code in some of the <b>'option'</b> functionality. You will not need to enter the trailing <b>';'</b> character as this is generated when the new dhcpd.conf is created.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><img src="003.gif" width="675" height="543"></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The screen shot provided below show <strong>errors with the syntax</strong> of the <strong>3 primary options</strong> required in the <strong>dhcpd.conf file</strong>. The <strong>phpDHCPAdmin application</strong> will list errors for the <strong>Default Domain option</strong> if the <strong>DNS record is not available</strong>. The <strong>Default Lease Time and Max Least Time options</strong> are <strong>integer only fields</strong> as the indicate the <strong>amount of lease time for each client in seconds</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><img src="004.gif" width="675" height="528"></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The following screen shot displays a <strong>successful update</strong> to the <strong>DHCPD.CONF global parameters</strong>. You may also wish to note that the application is hardcoded for the <strong>PXE Boot options</strong> and gives you the ability to <strong>enable or disable these options for the DHCPD daemon</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="005.gif"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><a name="vlans"><b> - Managing Subnets</b></a>
+                     <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The <strong>Managing Subnets 
+                      area</strong> is also <strong>restricted</strong> to <strong>users</strong> 
+                      with <strong>"Admin" level access</strong>. This area will 
+                      allow <strong>users</strong> the ability to <strong>add, 
+                      edit or delete global settings</strong> for multiple <strong>subnets</strong> 
+                      residing on a <strong>network</strong>. </td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>First once a <strong>user</strong> is <strong>authenticated</strong> 
+                      they would <strong>select</strong> the <strong>Manage Subnets 
+                      option</strong> from the <strong>navigation menu</strong>. 
+                      On this <strong>page</strong> the <strong>user</strong> 
+                      will see a <strong>selection box</strong> to allow <strong>easy 
+                      access</strong> to any <strong>subnet global settings</strong> 
+                      they may need to <strong>modify</strong>. Please see illustration 
+                      below.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><img src="006.gif" width="675" height="318"></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><a name="vlans_add"><b> - Adding Subnets</b></a>
+                     <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Next the <strong>user</strong> 
+                      will be presented with the <strong>global settings</strong> 
+                      for the <strong>VLAN</strong> or <strong>Subnet selected</strong> 
+                      to make <strong>modifications</strong> to. See illustration 
+                      below.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><font FACE ="Arial,Helvetica,sans-serif"><i><strong>Global 
+                      Subnet settings table</strong></i></font><br> <table width="100%" BORDER ="1" ALIGN ="LEFT" CELLPADDING ="4">
+                        <tr valign="top"> 
+                          <td><b>Parameter</b></td>
+                          <td><b>Description</b></td>
+                          <td><b>Datatype</b></td>
+                          <td><strong>Example Usage</strong></td>
+                        </tr>
+                        <tr valign="top"> 
+                          <td> <strong>domain-name-servers</strong></td>
+                          <td> A list of name servers for the specified subnet.</td>
+                          <td> List of IP addresses</td>
+                          <td>option domain-name-servers 155.101.201.10, 155.101.23.253; 
+                          </td>
+                        </tr>
+                        <tr valign="top"> 
+                          <td> <strong>range</strong></td>
+                          <td> Range of IP addresses to assign on the specified 
+                            network</td>
+                          <td> Low and high IP address</td>
+                          <td>range 155.101.201.200, 155.101.201.255;</td>
+                        </tr>
+                        <tr valign="top"> 
+                          <td> <strong>routers</strong></td>
+                          <td> A list of routers to use</td>
+                          <td> List of IP addresses</td>
+                          <td>opiton routers 155.101.201.1;</td>
+                        </tr>
+                        <tr valign="top"> 
+                          <td> <strong>subnet</strong></td>
+                          <td> Starts a subnet declaration</td>
+                          <td> N/A</td>
+                          <td>subnet 155.101.201.128</td>
+                        </tr>
+                        <tr valign="top"> 
+                          <td> <strong>subnet-mask</strong></td>
+                          <td> The subnet-mask of this network, group or host</td>
+                          <td> IP address</td>
+                          <td>netmask 255.255.255.0 { &lt;put domain-name server 
+                            options, routers &amp; range&amp; }</td>
+                        </tr>
+                      </table></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><img src="007.gif" width="675" height="439"></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The <strong>error ridden screenshot</strong> below shows the <strong>syntax checks performed by the application</strong> regarding a <strong>valid IPv4 address</strong>. As you can see if you use <strong>dynamic scopes for your DHCP enabled clients</strong> you may specify a <strong>range of IPv4 addresses</strong> for the <strong>DHCPD service</strong> to issue.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="008.gif" width="675" height="432"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Below you can see a proper submission for an <strong>additional subnet</strong> for the <strong>phpDHCPAdmin application</strong> which will be written to a <strong>new DHCPD.CONF file</strong> for use by the <strong>ISC DHCPD service</strong>. Please note that in order <strong>for multiple subnets to work</strong> you must have <strong>a multi homed interface configured</strong> and the <strong>switch the server is connected to trunced to each net</strong> you wish the interface to accept and issue dhcpd ack and req packets.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="009.gif" width="675" height="505"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><a name="vlans_edit"><b> - Editing Subnets</b></a>
+                     <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In order to <strong>edit an existing subnet configuration</strong> simply select the <strong>'Edit Subnet'</strong> button in the <strong>Manage Subnets area</strong>. Once the page loads you will see a screen similar to the one shown below. <strong>Select the subnet you wish to make changes to and continue</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="010.gif"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Once you have <strong>selected the subnet you wish to edit</strong> the <strong>subnet, netmask, dns, gateway and subnet name</strong> will be displayed for you to make changes to. Please note that you can <strong>add a range or scope of IP's using the form below by selected 'yes' to the 'Scope?' radio button</strong> and entering <strong>a range of IP's for the server to send</strong> to clients making dhcp requests.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="011.gif"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The illustration show below is meant to show a proper submission for the editing of a <strong>unique subnet for the DHCPD daemon</strong> to begin <strong>sending and recieving bootp and dhcpd ack and req packets</strong> on. <strong>Please note that you WILL need to create aliases for the eth* interface the DHPCD service is accepting requests on</strong>. For more information on creating a multi homed server please use the google.com search engine.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="012.gif"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><a name="vlans_del"><b> - Deleting Subnets</b></a>
+                     <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In order <strong>to delete an existing subnet</strong> you will select the <strong>'Delete Subnet' button</strong> on the <strong>'Manage Subnets' page</strong>, then <strong>select the subnet</strong> you will be deleting. You will want to <strong>keep in mind that if you currently have static hosts assigned to this subnet those static hosts will be deleted as well</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="013.gif"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The next page that will be displayed will be the <strong>current configuration settings for the subnet you selected</strong>, this page serves as a method of <strong>confirming you wish to delete the subnet shown as well as any statically assigned hosts belonging to this subnet group.</strong></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="014.gif"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The illustration shown below is the <strong>confirmation screen shown</strong> just prior to <strong>deleting an existing subnet</strong> and all <strong>static hosts assigned to that subnet</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="015.gif"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The screenshot shown below <strong>displays the successful deleting of the subnet you confirmed to delete</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="016.gif"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><a name="pxe"><b> - Managing PXE Groups 
+                    </b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This area will give you information regarding the usage of <strong>PXE BOOTP to enable network boot configurations for clients</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="006.gif" width="675" height="318"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><a name="pxe_add"><b> - Adding PXE Groups 
+                    </b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Illustrated below is the <strong>form responsible for adding a new PXE Group</strong> to the <strong>DHCPD.CONF</strong> which can later <strong>be assigned to various static hosts</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><img src="017.gif" width="675" height="348"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><font FACE ="Arial,Helvetica,sans-serif"><i><strong>PXE Group Configuration Option Descriptions </strong></i></font><br> 
+                     <table width="100%" BORDER ="1" ALIGN ="LEFT" CELLPADDING ="4">
+                        <tr valign="top"> 
+                          <td><b>Parameter</b></td>
+                          <td><b>Description</b></td>
+                          <td><b>Datatype</b></td>
+                          <td><strong>Example Usage</strong></td>
+                        </tr>
+                        <tr valign="top"> 
+                          <td> <strong>PXE Name </strong></td>
+                          <td> Common description used to provide easy to remember method of assigning static hosts to groups. </td>
+                          <td> String </td>
+                          <td>PXE-Group-Test</td>
+                        </tr>
+                        <tr valign="top"> 
+                          <td> <strong>PXE Server </strong></td>
+                          <td> IP or hostname of server running a TFTP service containing bootable images for DHCP client machines. </td>
+                          <td> Hostname or IP address</td>
+                          <td><p>www.example.com or 192.168.0.25 </p>                          </td>
+                        </tr>
+                        <tr valign="top"> 
+                          <td> <strong>PXE File </strong></td>
+                          <td> Full path to the bootable image file handed to clients by the TFTP service. </td>
+                          <td> Path and filename</td>
+                          <td>/boot/tftp/pxelinux.0</td>
+                        </tr>
+                    </table></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;By <strong>defining a PXE Group you can assign static hosts to use the PXE Group boot parameters</strong> which assist with <strong>booting machines without an OS from the network</strong> and enable them to <strong>download an installable operating system</strong>. Below is a table of options available and descriptions to assist in ensuring a proper configuration.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The illustration below shows the results of a new <strong>PXE Group</strong> being added to the <strong>DHCPD.CONF</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="018.gif" width="675" height="389"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><a name="pxe_edit"><b> - Editing PXE Groups 
+                    </b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The following screen shot(s) walk you through <strong>editing an existing PXE Group configuration</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="019.gif" width="675" height="320"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;While <strong>editing an existing PXE group configuration</strong> you need to keep in mind that <strong>any static host assigned to that PXE group</strong> will begin <strong>using the new settings to obtain a bootable network image</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="020.gif" width="675" height="347"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Below you will see an illustration of a <strong>valid edited PXE Group</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="021.gif" width="675" height="346"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><a name="pxe_del"><b> - Deleting PXE Groups 
+                    </b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In order to <strong>delete an existing PXE Group</strong> you will need to <strong>first select the 'Delete PXE Group' button</strong> and then <strong>select the PXE Group you wish to remove from the existing DHCPD.CONF</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="022.gif"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shown below is the <strong>details of the PXE Group configuration you chose to delete</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="023.gif"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The <strong>confirmation dialog box illustrated</strong> below will appear to <strong>confirm the deletion of the PXE Group you selected</strong>. You need to understand that <strong>once this PXE Group has been deleted it will remove any static hosts assigned</strong> to <strong>this group from the PXE boot services</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="024.gif"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Illustrated below is the <strong>screen displayed once the PXE Group has been removed</strong> from the <strong>existing DHCPD.CONF</strong> as well as<strong> modifying all static hosts assigned to this PXE Group</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="025.gif"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><a name="hosts"><b> - Managing Static Hosts for Subnets 
+                      </b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Using the <strong>Manage 
+                      Hosts option</strong> from the <strong>Navigation menu</strong> 
+                      will allow <strong>users</strong> with a <strong>"user" 
+                      level</strong> or <strong>"admin" access</strong> to <strong>modify individual hosts</strong> 
+                      for a given <strong>subnet</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><a name="search_hosts"><b> - Searching for static hosts 
+                      </b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr>
+																		  <td> There is also a <strong>search 
+                      option</strong> for the individual making changes, which 
+                      allows <strong>quick searching</strong> accross the various 
+                      <strong>subnets</strong> on the <strong>network</strong> 
+                      for a <strong>particular Host, MAC-address or IP address</strong>. 
+                      See illustration below.
+																			</td>
+																</tr>
+                  <tr> 
+                    <td><img src="026.gif" width="675" height="274"></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;As <strong>illustrated below</strong> you see a <strong>list of static hosts displayed for future editing</strong>. Once you have <strong>selected the static host you wish to edit</strong>, simply <strong>click the "Select Host" button to continue</strong>.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><img src="027.gif" width="675" height="498"></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The next screen that will be displayed will illustrate <strong>the current hostname, mac address, ip address, membership of subnet and pxe group if so defined</strong>.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><img src="028.gif"></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The following illustration shows <strong>syntax errors for the various fields</strong>.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><img src="029.gif"></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><table width="100%"  border="1" cellspacing="5">
+ <tr>
+  <td colspan="3"><strong>Proper syntax formating chart for static hosts </strong></td>
+  </tr>
+ <tr>
+  <td width="23%">Hostname</td>
+  <td width="14%">String</td>
+  <td width="63%">A-Z 0-9 - _ </td>
+ </tr>
+ <tr>
+  <td>IP Address </td>
+  <td>IPv4</td>
+  <td>0.0.0.0 - 255.255.255.255 </td>
+ </tr>
+ <tr>
+  <td>MAC Address </td>
+  <td>Alpha</td>
+  <td>[A-F0-9]{2}:  {12} example, 0F:A3:C6:00:FF:A9</td>
+ </tr>
+</table>
+</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Below is an illustration <strong>showing a duplicate entry</strong> which is <strong>invalid with the DHCPD.CONF configuration</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="039.gif"></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;The following illustrates a <strong>valid edited static host entry</strong>. As you can see the <strong>formatting of hostname, IP address and MAC address</strong> were all properly entered.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><img src="030.gif"></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><a name="add_hosts"><b> - Adding a new static host 
+                      </b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In this are you are able to <strong>add a new static host</strong> to the <strong>DHPCD.CONF</strong>, add it to a specific subnet as well as <strong>assign it to a PXE Group</strong> which <strong>allows it to recieve optional boot parameters when configured</strong>.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="031.gif" width="675" height="307"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Below is a <strong>table describing the fields</strong>, the <strong>type of data allowed</strong> and <strong>examples of data</strong> you can use <strong>to ensure proper addition of your staticly defined host</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><table width="100%"  border="1" cellspacing="5">
+                     <tr>
+                      <td colspan="3"><strong>Proper syntax formating chart for static hosts </strong></td>
+                     </tr>
+                     <tr>
+                      <td width="23%">Hostname</td>
+                      <td width="14%">String</td>
+                      <td width="63%">A-Z 0-9 - _ </td>
+                     </tr>
+                     <tr>
+                      <td>IP Address </td>
+                      <td>IPv4</td>
+                      <td>0.0.0.0 - 255.255.255.255 </td>
+                     </tr>
+                     <tr>
+                      <td>MAC Address </td>
+                      <td>Alpha</td>
+                      <td>[A-F0-9]{2}: {12} example, 0F:A3:C6:00:FF:A9</td>
+                     </tr>
+                    </table></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The <strong>illustraton below</strong> is here to show you the <strong>error message recieved</strong> on the <strong>attempt to enter illegally formatted data</strong> for any of the <strong>required fields when adding a staticly defined host</strong>. </td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="033.gif" width="675" height="387"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;There are also <strong>programming rules in place</strong> to <strong>prevent the entry of duplicate hostnames, IP addresses or MAC addresses</strong> which would <strong>cause the DHCPD service a failure to restart</strong>, the <strong>illustration below shows the errors recieved</strong>. </td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="040.gif" width="675" height="435"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If you have <strong>a valid hostname, IP and MAC address</strong> per the <strong>table listed above</strong> you will <strong>recieve a confirmation page</strong> similar to the one shown below letting you know <strong>the static host was added to the subnet</strong> you specified.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="032.gif" width="675" height="388"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><a name="del_hosts"><b> - Deleting a new static host 
+                      </b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;The following <strong>will illustrate step by step</strong> the <strong>method to remove a staticly defined host</strong>. The <strong>first step involved</strong> will require you to <strong>select a subnet for a complete list of hosts</strong> in which you can <strong>select the one you wish to delete</strong>. </td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="034.gif" width="675" height="275"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Next you will <strong>need to locate the machine</strong> you wish <strong>to delete from the list of machines assinged to the subnet</strong> you selected. This <strong>area is read-only</strong>. </td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="035.gif" width="675" height="525"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Once you have <strong>located the host</strong> you wish <strong>to delete simply verify that the record matches the host you wish to delete and click the 'Confirm Delete Host' button</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="036.gif" width="675" height="355"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Upon <strong>successful removal of the host</strong> from the <strong>DHCPD.CONF the confirmation screen</strong> will appear as shown below. </td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="041.gif" width="675" height="290"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><a name="update"><b> - Update DHCP settings</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This area is <strong>crucial for the phpDHCPAdmin application</strong> as it is the portion which <strong>creates a new DHCPD.CONF file</strong> and <strong>restarts the DHCPD service.</strong> In order <strong>to restart the DHCPD service</strong> simply <strong>click the 'Click to Update DHCP Settings' button</strong> located at the top or bottom of the <strong>syntax formatted area displaying the contents of the new DHCPD.CONF file about to be written</strong>.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><img src="042.gif" width="675" height="656"></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><a name="utils"><b>Administrative menu</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;With <strong>the administrative menu</strong> you can <strong>perform quick restorations from backup</strong> of <strong>previous DHCPD.CONF configurations</strong> which would <strong>help with any problems of DHCPD service downtime</strong>. You may also <strong>import massive amounts of static host records</strong> using <strong>a simple CSV formatted file</strong> and <strong>assign all records to a subnet and/or PXE group</strong>.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><a name="import"><b>Importing static hosts from CSV file</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In order <strong>to import a list of hosts from a CSV (Comma Separated Value) file</strong> you must <strong>first ensure that each record in the file is of the valid field types</strong> (See fig. a-1), next you need to <strong>ensure that the formatting of each line is accurate</strong> (See fig. a-2).</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>Fig. a-1<br><table width="100%"  border="1" cellspacing="5">
+                     <tr>
+                      <td colspan="3"><strong>Proper syntax formating chart for static hosts </strong></td>
+                     </tr>
+                     <tr>
+                      <td width="23%">Hostname</td>
+                      <td width="14%">String</td>
+                      <td width="63%">A-Z 0-9 - _ </td>
+                     </tr>
+                     <tr>
+                      <td>IP Address </td>
+                      <td>IPv4</td>
+                      <td>0.0.0.0 - 255.255.255.255 </td>
+                     </tr>
+                     <tr>
+                      <td>MAC Address </td>
+                      <td>Alpha</td>
+                      <td>[A-F0-9]{2}: {12} example, 0F:A3:C6:00:FF:A9</td>
+                     </tr>
+                    </table></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>Fig. a-2<br><table width="100%"  border="1" cellspacing="5">
+                     <tr>
+                      <td><strong>Sample File input</strong>(each record on a separate line)</td>
+                     </tr>
+                     <tr>
+                      <td>Hostname1,00:aa:bb:cc:dd:ee,192.168.0.3</td>
+                     </tr>
+                     <tr>
+                      <td>Hostname2,00:aa:11:22:dd:ee,192.168.0.4</td>
+                     </tr>
+                     <tr>
+                      <td>Hostname3,00:aa:bb:11:22:ee,192.168.0.5</td>
+                     </tr>
+                    </table></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="043.gif" width="675" height="320"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Once you <strong>have verified the formatting of each record</strong> within the file simply <strong>select the file from the explorer window by clicking the 'Browse...' button</strong>. Once you have <strong>located the file</strong> containing <strong>the hosts records you wish to import</strong> click the <strong>'Open' button</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="044.gif" width="675" height="493"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Next you will want to <strong>assign them to a pre-existing subnet</strong>. If you <strong>do not already have a subnet defined</strong> please <strong>review the 'Manage Subnets' section</strong> of this help file. If you <strong>wish to assign some hosts, but not all to one subnet</strong> etc. you will <strong>need to create a separate file for each subnet to import</strong>. </td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="045.gif" width="675" height="319"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp; The <strong>figure illustrated below</strong> is here to show you <strong>the errors associated with files that contain invalid syntax</strong> per the various<strong> field types</strong> as well as <strong>errors regarding duplicate entries</strong> for the <strong>3 main field types</strong> listed above in fig. a-1. If you make a <strong>mistake in the file</strong> instead of starting over this area will provide you with a <strong>method of continueing after making modifications</strong> to the entries which contain errors. </td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="046.gif" width="675" height="682"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><a name="prefs"><b> - User level Preferences</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>User Level Preferences</strong> allow the <strong>user which is currently logged in</strong> to <strong>change their contact information</strong> as well as <strong>reset their password</strong> for the <strong>phpDHCPAdmin application</strong>. Below are illustrations of the main screen, error screens and sucessful update screens. <em><strong>*This area is only applicable to users with 'user' level privledges.</strong></em> </td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><img src="047.gif" width="675" height="501"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Below is the return screen on a <strong>valid update to the user preferences</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="048.gif" width="675" height="431"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><a name="users"><b> - Managing users</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The <strong>Administrative Utilities area</strong> will allow you <strong>create, edit or delete users with administrative or user level privleges</strong> for the <strong>phpDHCPAdmin application</strong>. Below is information to assist you in all areas.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="049.gif" width="675" height="319"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><a name="add_users"><b> - Adding New Users</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Here we <strong>demonstrate creating a new user</strong> for the <strong>phpDHCPAdmin application</strong>. With this area you may <strong>define the users login information and set the access level as well as contact information</strong> and notes <strong>for each user you create</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="050.gif"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The illustration below <strong>shows the errors regarding invalid email address</strong> but <strong>each field is validated for invalid syntax</strong> and <strong>prompts you to re-enter data</strong> correctly.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="051.gif" width="675" height="542"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><a name="edit_users"><b> - Editing Existing Users</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Here are <strong>step-by-step instructions</strong> on <strong>editing existing users for the phpDHCPAdmin application</strong>, this is the area you would wish to <strong>use to reset a users password and elevate or demote their access levels</strong>. First step is to <strong>select the user you wish to edit</strong>. </td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="052.gif" width="675" height="320"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Once you have <strong>selected the user you wish to edit contact details, reset the password or change their access level</strong> with the illustration below will be displayed. <strong>All fields marked as required must contain valid data</strong>. </td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="053.gif" width="675" height="499"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><a name="del_users"><b> - Deleting Existing Users</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In order to remove access for a user account you must <strong>first select the user</strong> you wish to <strong>delete and confirm to remove the user from the access database</strong>.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="052.gif" width="675" height="320"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The following illustration <strong>displays the data for the user you wish to remove</strong>. To <strong>finalize simply select the 'Delete User' button</strong>.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="054.gif" width="675" height="475"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><a name="logs"><b> - Managing Access Logs</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In the <strong>Manage Logs area</strong> of the <strong>phpDHCPAdmin application</strong> you may <strong>view and flush the access logging information for valid and invalid access attempts</strong> for the phpDHCPAdmin application.</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><img src="055.gif" width="675" height="408"></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In order to <strong>view the details of a log entry</strong> simple click the <strong>link for the 'date' field</strong> as underlined and the following screen will appear.</td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+																		<tr> 
+                    <td><img src="056.gif" width="675" height="179"></td>
+                  </tr>
+																		<tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><a name="support"><b>- Obtaining Application Support</b></a> <div align="right"><a href="help.html#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><a name="admin"><b> - Contact Administrator</b></a> <div align="right"><a href="help.php?id=<?PHP echo $_GET['id']; ?>&skin=<?PHP echo $_GET['skin']; ?>&&&#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td><a name="reference"><b> - References for the DHCPD service</b></a> <div align="right"><a href="help.php?id=<?PHP echo $_GET['id']; ?>&skin=<?PHP echo $_GET['skin']; ?>&&&#index"><b>Index</b></a></div></td>
+                  </tr>
+                  <tr> 
+                    <td><a href="http://www.tldp.org/HOWTO/DHCP/x369.html" target="_blank">http://www.tldp.org/HOWTO/DHCP/x369.html</a></td>
+                  </tr>
+                  <tr> 
+                    <td><a href="http://www.ietf.org/rfc/rfc1531.txt" target="_blank">http://www.ietf.org/rfc/rfc1531.txt</a></td>
+                  </tr>
+                  <tr> 
+                    <td><a href="http://www.linux-mag.com/2000-04/networknirvana_02.html" target="_blank">http://www.linux-mag.com/2000-04/networknirvana_02.html</a></td>
+                  </tr>
+                </table>
+</td></tr></table></td> 
+              <td background="<?PHP echo $path; ?>/r_tile.gif" width="16" nowrap><img src="<?PHP echo $path; ?>/dot.gif" width="1" height="1" border="0" vspace="0" hspace="0" alt=""></td> 
+             </tr> 
+            </table> 
+            <table width="100%" border="0" cellspacing="0" cellpadding="0"> 
+             <tr> 
+              <td width="116"><img src="<?PHP echo $path; ?>/btm_l_corner.gif" width="116" height="32" border="0" vspace="0" hspace="0" alt=""></td> 
+              <td width="100%" background="<?PHP echo $path; ?>/btm_tile.gif"><img src="<?PHP echo $path; ?>/dot.gif" width="1" height="1" border="0" vspace="0" hspace="0" alt=""></td> 
+              <td width="77"><img src="<?PHP echo $path; ?>/btm_r_corner.gif" width="84" height="32" border="0" vspace="0" hspace="0" alt=""></td> 
+             </tr> 
+            </table> 
+            <br> </td> 
+       </tr> 
+         </table></td> 
+    </tr> 
+      </table> 
+      <table width="725" cellpadding="1" cellspacing="0" border="0" CLASS="btmTableBdr_1" align="left"> 
+       <tr> 
+        <td width="100%"> <table width="100%" cellpadding="3" cellspacing="0" border="0" CLASS="btmTableBdr_2"> 
+          <tr> 
+           <td align="left"><?PHP echo $skin; ?></td>
+											<td align="right" class="copyright">All rights reserved &reg; - <a href="http://www.enj0i.com" target="_BLANK">enj0i.com</a></td> 
+          </tr> 
+         </table></td> 
+       </tr> 
+      </table></td> 
+ </tr> 
+</table></td> 
+ </tr> 
+</table> 
+</body>
+</html>

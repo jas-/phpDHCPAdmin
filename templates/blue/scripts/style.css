@@ -1,0 +1,150 @@
+hr {
+ color: #006699;
+ background-color: #006699;
+}
+      body {
+           margin : 0;
+           font-size : 10px;
+           background : #ffffff;
+      }
+     a {
+           color : #006699;
+           font : 11px Arial, Helvetica, sans-serif;
+											font-weight: bold;
+      }
+     a:hover {
+           color : #cc0000;
+           font : 11px Arial, Helvetica, sans-serif;
+											font-weight: bold;
+      }
+     body {
+           color : #000000;
+           font : 12px Arial, Helvetica, sans-serif;
+      }
+
+     font {
+           color : #000000;
+           font : 12px Arial, Helvetica, sans-serif;
+      }
+     form {
+           border : thin;
+           color : #000000;
+           font-family : Arial, Helvetica, sans-serif;
+           font-size : 10px;
+      }
+     input {
+           color : #000000;
+           font : 10px Arial, Helvetica, sans-serif;
+           margin : 0;
+           padding : 0;
+           border : 1px outset #006699;
+           background-color : #dcdcde;
+      }
+     p {
+           color : #000000;
+           font : 11px Verdana, Helvetica, Arial, Helvetica, sans-serif;
+      }
+     td {
+           color : #000000;
+           font : 12px Arial, Helvetica, sans-serif;
+      }
+     textarea {
+           color : #000000;
+           font : 10px Arial, Helvetica, sans-serif;
+           margin : 0;
+           padding : 0;
+           border : 1px outset #006699;
+           background-color : #dcdcde;
+      }
+     select {
+           color : #000000;
+           font : 10px Arial, Helvetica, sans-serif;
+           margin : 0;
+           padding : 0;
+           border : 1px outset #006699;
+           background-color : #dcdcde;
+      }
+						.btmTableBdr_1 {
+                border: 1px outset;
+					 background: #006699;
+						background-color: #006699;
+						border-color: #006699;
+					}
+					.btmTableBdr_2 {
+					 background: #dcdcde;
+						background-color: #dcdcde;
+						border-color: #dcdcde;
+					}
+     .leftMenuBold {
+     color : #006699;
+     font : 12px Arial, Helvetica, sans-serif;
+					font-weight: bold;
+				}
+				.leftMenuNrml {
+     color : #006699;
+     font : 11px Arial, Helvetica, sans-serif;
+					font-weight: normal;
+				}
+.copyright {
+ color : #006699;
+ font-family : Arial, Helvetica, sans-serif;
+ font-size : 9px;
+ font-style : normal;
+ font-weight : normal;
+ font-variant : normal;
+}
+.horizontalBar {
+				 color: #006699;
+				}
+#layer1
+{
+ position: absolute;
+ left:200px;
+ top:375px;
+ width:250px;
+ background-color:#CCCCCC;
+ border: 1px solid #000;
+ z-index: 50;
+}
+#layer1_handle
+{
+ background-color:#006699;
+ padding:2px;
+ text-align:center;
+ font-weight:bold;
+ color: #000000;
+ vertical-align:middle;
+}
+#layer1_content
+{
+ padding:5px;
+}
+#layer2
+{
+ position: absolute;
+ left:200px;
+ top:290px;
+ width:500px;
+ background-color:#CCCCCC;
+ border: 1px solid #000;
+ z-index: 50;
+}
+#layer2_handle
+{
+ background-color:#006699;
+ padding:2px;
+ text-align:center;
+ font-weight:bold;
+ color: #000000;
+ vertical-align:middle;
+}
+#layer2_content
+{
+ padding:5px;
+}
+#close
+{
+ float:right;
+ text-decoration:none;
+ color:#FFFFFF;
+}
